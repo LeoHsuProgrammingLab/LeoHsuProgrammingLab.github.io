@@ -5,7 +5,7 @@ permalink: /
 subtitle: <a href='#'>Affiliations</a>. Interested in Computer Science, Machine Learning, Computer Vision, Forestry Mensuration, Basketball. 
 profile:
   align: right
-  image: Chih_Chuan_Hsu.jpg
+  image: cch.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
     <p>Taipei, Taiwan</p>
