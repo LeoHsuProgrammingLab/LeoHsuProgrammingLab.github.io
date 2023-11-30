@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Interested in Computer Science, Machine Learning, Forestry Mensuration, Basketball. 
+subtitle: <a href='#'>Affiliations</a>. Interested in Computer Science, Machine Learning, Computer Vision, Forestry Mensuration, Basketball. 
 profile:
   align: right
   image: Chih_Chuan_Hsu.jpg
