@@ -19,7 +19,8 @@ I am a graduate research assistant in the Communications and Multimedia Lab at N
 
 At the same time, I am a master's student in the Department of Forestry and Environmental Resources Conservation at NTU. I work on efficient Android mobile application development of forest survey and forest mensuration. My aspiration is to apply AI and software to different domains such as forestry and healthcare.
 
-I was a student athlete when I studied in bachelor's degree at NTU. I had been the captain of [NTU Owls](https://www.facebook.com/ntubasketballteam/) from 2019 to 2021.
+I was a student athlete when I studied in bachelor's degree at NTU. I had been the captain of [NTU Owls](https://www.facebook.com/ntubasketballteam/) from 2019 to 2021. I led the team to be the only team without any basketball-specialized student in Division 1 in Taiwan.
+I have been a super Lakers fan since 2007-08 season. My favorite player is Kobe Bryant. After he retired, I enjoyed Rajon Rondo's game, and I tried hard to imitate both of them in my 
 
 Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
 
