@@ -1,12 +1,12 @@
 {
   "basics": {
-    "name": "Albert Einstein",
-    "label": "Scientist",
+    "name": "Chih-Chuan, Hsu",
+    "label": "Graduate Researcher",
     "image": "",
-    "email": "albert@einstein.de",
-    "phone": "(912) 123-4567",
-    "url": "https://alshedivat.github.io/al-folio/",
-    "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
+    "email": "leohsucc@gmail.com",
+    "phone": "",
+    "website": "https://leohsuprogramminglab.github.io/",
+    "summary": "An immersed programmer holding a basketball lost in the forest.",
     "location": {
       "address": "2712 Broadway St",
       "postalCode": "CA 94115",
@@ -24,14 +24,36 @@
   },
   "work": [
     {
-      "name": "Institute for Advanced Study, Princeton University",
-      "position": "Professor of Theoretical Physics",
-      "url": "https://example.com",
-      "startDate": "1933-01-01",
-      "endDate": "1955-01-01",
-      "summary": "Teaching at Palmer Physical Laboratory (now 302 Frist Campus Center). While not a professor at Princeton, I associated with the physics professors and continued to give lectures on campus.",
+      "name": "OME Technology",
+      "position": "RD Intern in software development",
+      "url": "",
+      "startDate": "2022-06-20",
+      "endDate": "2022-09-01",
+      "summary": "Designing a Convolutional Neural Network (CNN) to implement anomaly detection in PCR machine. With dropout and test-time augmentation (TTA), I attained 98% accuracy.",
       "highlights": [
-        "Relativity"
+        "CNN", "TTA", "Automatic Optical Inspection"
+      ]
+    },
+    {
+      "name": "National Taiwan University",
+      "position": "Teaching Assistant",
+      "url": "",
+      "startDate": "2022-02-01",
+      "endDate": "2022-06-15",
+      "summary": "Leading the experiments of forest measurement and sampling tools with 35 classmates.",
+      "highlights": [
+        "Horizontal Point Sampling", "Tree Measurement", "Tree Volume Measurement"
+      ]
+    },
+    {
+      "name": "National Taiwan University",
+      "position": "Graduate Research Assistant",
+      "url": "",
+      "startDate": "2023-08-01",
+      "endDate": "current",
+      "summary": "First, I utilized YOLOv7 to detect the patient's position in a monitoring system. Second, I extracted the features from patients' notes written by their families, and predict the potential of sarcopenia using LLM (Bert-Base-Chinese).",
+      "highlights": [
+        "Object Detection", "Healthcare system", "LLM"
       ]
     }
   ],
@@ -63,11 +85,19 @@
   "skills": [],
   "languages": [
     {
-      "language": "German",
+      "language": "Mandarin",
       "fluency": "Native speaker"
     },
     {
       "language": "English",
+      "fluency": "Fluent"
+    },
+    {
+      "language": "Japanese",
+      "fluency": "Elementary"
+    }, 
+    {
+      "language": "Taiwanese",
       "fluency": "Fluent"
     }
   ],
