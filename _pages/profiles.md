@@ -10,13 +10,13 @@ profiles:
   # if you want to include more than one profile, just replicate the following block
   # and create one content file for each profile inside _pages/
   - align: right
-    image: Chih_Chuan_Hsu.jpg
+    image: cch2.jpg
     content: about_einstein.md
     image_circular: false # crops the image to make it circular
     more_info: >
       <p>Taipei, Taiwan</p>
   - align: left
-    image: Chih_Chuan_Hsu.jpg
+    image: cch2.jpg
     content: about_einstein.md
     image_circular: false # crops the image to make it circular
     more_info: >

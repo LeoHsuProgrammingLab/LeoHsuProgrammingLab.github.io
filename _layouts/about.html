@@ -29,11 +29,13 @@ layout: default
               alt=page.profile.image
               cache_bust=true -%}
             {% endif -%}
+
             {%- if page.profile.more_info %}
-            <div class="more-info">
-              {{ page.profile.more_info }}
-            </div>
+              <div class="more-info">
+                {{ page.profile.more_info }}
+              </div>
             {%- endif %}
+
           </div>
           {%- endif %}
 
@@ -47,19 +49,19 @@ layout: default
             {%- include news.html limit=true %}
           {%- endif %}
 
-          <!-- Latest posts -->
-          <!-- {% if page.latest_posts -%}
+          Latest posts
+          {% if page.latest_posts -%}
             <h2><a href="{{ '/blog/' | relative_url }}" style="color: inherit;">latest posts</a></h2>
             {%- include latest_posts.html %}
-          {%- endif %} -->
+          {%- endif %} 
 
-          <!-- Selected papers -->
-          <!-- {% if page.selected_papers -%}
+          Selected papers
+          {% if page.selected_papers -%}
             <h2><a href="{{ '/publications/' | relative_url }}" style="color: inherit;">selected publications</a></h2>
             {%- include selected_papers.html %}
-          {%- endif %} -->
+          {%- endif %}
 
-          <!-- Social -->
+          Social
           {%- if page.social %}
             <div class="social">
               <div class="contact-icons">
