@@ -11,14 +11,23 @@
       {% else %}
       {% assign date = null %}
       {% endif %}
-      <table class="table-cv">
+      {% if date %}
+      <div class="col-xs-3 cl-sm-3 col-md-3 mr-2">
+        <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
+          {{date}}
+        </span>
+      </div>
+      {% endif %}
+      <!-- <table class="table-cv">
         <tbody>
           <tr>
             <td>
               {% if date %}
-              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
-              {{date}}
-              </span>
+              <div class="col-xs-3 cl-sm-3 col-md-3 mr-2">
+                <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
+                  {{date}}
+                </span>
+              </div>
               {% endif %}
             </td>
           </tr>
@@ -30,8 +39,8 @@
           </tr>
           {% endif %}
         </tbody>
-      </table>
-      <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
+      </table> -->
+      <div class="col-xs-8 cl-sm-8 col-md-8 mt-2 mt-md-0">
         <h6 class="title font-weight-bold ml-1 ml-md-4"><a href="{{ content.url }}">{{content.studyType}}</a></h6>
         <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem;">{{content.institution}}</h6>
         <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem; font-style: italic;">{{content.area}}</h6>
