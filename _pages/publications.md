@@ -5,6 +5,7 @@ title: Publications
 description: 
 nav_order: 
 selected_papers: true
+years: [2025]
 ---
 <div class="publications">
 {%- for y in page.years %}
