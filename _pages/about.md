@@ -2,17 +2,17 @@
 layout: about
 title: About
 permalink: /
-subtitle: Enthusiasm in Computer Science, Machine Learning, Computer Vision, Forest Mensuration, and Basketball. 
+subtitle: My research focus includes 3D Computer Vision, Generative Modeling
 profile:
   align: right
   image: cch2.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>Taipei, Taiwan</p>
+    <p>College Station, Texas</p>
 
 news: false  # includes a list of news items
 latest_posts: false  # includes a list of the newest posts
-selected_papers: false # includes a list of papers marked as "selected={true}"
+selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 I am a graduate research assistant in the Communications and Multimedia Lab at National Taiwan University (NTU). In my research, I use computer vision techniques and object detection to improve the healthcare monitoring system. The other topic is utilizing Large Language Model to extract features from patients' notes and predict the potential of disease.
