@@ -1,15 +1,16 @@
 ---
 layout: page
 permalink: /publications/
-title: [Uncertainty Matters in Dynamic Gaussian Splatting for Monocular 4D Reconstruction](https://tamu-visual-ai.github.io/usplat4d/)
-description: ICLR 2026 Submission (Under Review)
+title: Publications
+description: "Publications by categories in reversed chronological order."
 nav: true
 nav_order: 1
+selected_papers: true
 ---
-<!-- _pages/publications.md -->
 
 <div class="publications">
-
-{% bibliography -f {{ site.scholar.bibliography }} %}
-
+{%- for y in page.years %}
+  <h2 class="year">{{y}}</h2>
+  {%- bibliography -f {{site.scholar.bibliography}} -q @*[year={{y}}]* %}
+{%- endfor %}
 </div>
