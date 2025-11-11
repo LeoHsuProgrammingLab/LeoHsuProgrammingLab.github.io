@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: My research focus includes 3D Computer Vision, Generative Modeling
+subtitle: My research focus includes 3D Computer Vision, Generative Modeling, and Physics-Informed Reconstruction
 profile:
   align: right
   image: cch2.jpg
