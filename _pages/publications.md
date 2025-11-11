@@ -4,7 +4,7 @@ permalink: /publications/
 title: Publications
 description: "Publications by categories in reversed chronological order."
 nav: false
-nav_order: 1
+nav_order: 
 selected_papers: true
 ---
 <div class="publications">

@@ -15,7 +15,7 @@ latest_posts: false  # includes a list of the newest posts
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
-I am a second-year master's degree student in Department of Computer Science and Engineering at Texas A&M University (TAMU). I am fortunate to be advised by Prof. [Cheng Zhang](https://czhang0528.github.io/) in TAMU Visual AI Lab, and we are now working on generative modeling for explainable biology. For my previous project, we worked on dynamic 3D reconstruction.
+I am a second-year master's degree student in Department of Computer Science and Engineering at Texas A&M University (TAMU). I am fortunate to be advised by Prof. [Cheng Zhang](https://czhang0528.github.io/) in TAMU Visual AI Lab, and we are now working on **generative modeling for explainable AI**. Previously, we worked on **dynamic 3D reconstruction**.
 
 I was a graduate research assistant in the Communications and Multimedia Lab in Department of Computer Science and Information Engineering at National Taiwan University (NTU), advised by Prog. [Cheng-Fu Chou](https://www.csie.ntu.edu.tw/~ccf/). We worked on intelligent health introducing computer vision (object detection & multi-object tracking) to hospital management. I earned my bachelor's and master's degree in Department of Forestry and Environmental Resource Conservation at NTU, advised by Prof. [Tzeng Yih, Lam](https://forestry.ubc.ca/faculty-profile/tzeng-yih-lam/), and we worked on designing Android Mobile Application for forest sampling method (Horizontal Point Sampling).
 
