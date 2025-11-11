@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: My research focus includes 3D Computer Vision, Generative Modeling, and Physics-Informed Reconstruction
+subtitle: My research interests are 3D Computer Vision, Generative Modeling, and Physics-Informed Reconstruction
 profile:
   align: right
   image: cch2.jpg
@@ -15,7 +15,7 @@ latest_posts: false  # includes a list of the newest posts
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
-I am a graduate research assistant in the Communications and Multimedia Lab at National Taiwan University (NTU). In my research, I use computer vision techniques and object detection to improve the healthcare monitoring system. The other topic is utilizing Large Language Model to extract features from patients' notes and predict the potential of disease.
+I am a second-year master's degree student in Department of Computer Science and Engineering at Texas A&M University. I am fortunate to be advised by Prof. [Cheng Zhang](https://czhang0528.github.io/). research assistant in the Communications and Multimedia Lab at National Taiwan University (NTU). In my research, I use computer vision techniques and object detection to improve the healthcare monitoring system. The other topic is utilizing Large Language Model to extract features from patients' notes and predict the potential of disease.
 
 At the same time, I am a master's student in the Department of Forestry and Environmental Resource Conservation at NTU. I work on efficient Android mobile application development for forest surveying and forest mensuration. My aspiration is to apply AI and software to different domains such as forestry and healthcare. Although I am a forestry major student, I am absorbed in computer science with 45 course credits and the above projects. The design and efficiency-driven (regardless of time or space or other resources) philosophy are fascinating to me. Currently, I am applying for a master's degree in computer science.
 
