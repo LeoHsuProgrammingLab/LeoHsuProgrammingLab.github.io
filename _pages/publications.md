@@ -3,9 +3,13 @@ layout: page
 permalink: /publications/
 title: Publications
 description: 
-nav_order: 
+nav_order: 2
+nav: true
 selected_papers: true
-years: [2025, 1967, 1956, 1950, 1935, 1905]
+years: [2025]
 ---
-
-{% include selected_papers.html %}
+<div class="publications">
+{%- for y in page.years %}
+  {% bibliography %}
+{%- endfor %}
+</div>

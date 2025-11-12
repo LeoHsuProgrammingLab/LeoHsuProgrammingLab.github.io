@@ -23,7 +23,7 @@ I am a second-year master's degree student in Department of Computer Science and
 
 ### Background (TL;DR)
 
-I was a graduate research assistant in the Communications and Multimedia Lab in Department of Computer Science and Information Engineering at National Taiwan University (NTU), advised by Prog. [Cheng-Fu Chou](https://www.csie.ntu.edu.tw/~ccf/). We worked on intelligent health introducing computer vision (object detection & multi-object tracking) to hospital management. I earned my bachelor's and master's degree in Department of Forestry and Environmental Resource Conservation at NTU, advised by Prof. [Tzeng Yih, Lam](https://forestry.ubc.ca/faculty-profile/tzeng-yih-lam/), and we worked on designing Android Mobile Application with computer vision for forest sampling method (Horizontal Point Sampling).
+I was a graduate research assistant in the Communications and Multimedia Lab in Department of Computer Science and Information Engineering at National Taiwan University (NTU), advised by Prof. [Cheng-Fu Chou](https://www.csie.ntu.edu.tw/~ccf/). We worked on intelligent health introducing vision perception (object detection & multi-object tracking) to hospital management. I earned my bachelor's and master's degree in Department of Forestry and Environmental Resource Conservation at NTU, advised by Prof. [Tzeng Yih, Lam](https://forestry.ubc.ca/faculty-profile/tzeng-yih-lam/), and we worked on designing Android mobile camera application for forest sampling method (Horizontal Point Sampling).
 
 ### Extracurriculum (TL;DR)
 
