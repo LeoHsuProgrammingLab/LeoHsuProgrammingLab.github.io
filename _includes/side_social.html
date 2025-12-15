@@ -1,0 +1,14 @@
+{%- comment -%}
+  Floating side social bar.
+  Enable per-page with: side_social: true
+{%- endcomment -%}
+
+{%- if page.side_social -%}
+<div class="side-social" aria-label="Social links">
+  <div class="side-social-icons">
+    {% include social.html %}
+  </div>
+</div>
+{%- endif -%}
+
+

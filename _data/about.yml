@@ -1,0 +1,29 @@
+education:
+  - school: Texas A&M University
+    location: College Station, TX, USA
+    degree: M.S. in Computer Science and Engineering
+    dates: Aug. 2024 – May. 2026
+    logo: education/TAMU.png
+    description:
+      - "TAMU Visual AI Lab (Advisor: Prof. Cheng Zhang)"
+      - Biology-aware fine-grained image generation
+  - school: National Taiwan University
+    location: Taipei, Taiwan
+    degree: M.S. in Forestry and Resource Conservation
+    dates: Feb. 2022 – Jun. 2024
+    logo: education/NTU_1.jpg
+    description:
+      - "Communications and Multimedia Lab (Advisor: Prof. Cheng-Fu Chou)"
+      - "Bed-Exiting Detection and Tracking for Intelligent Healthcare System (Advisor: Prof. Cheng-Fu Chou & Prof. Ming-Sui Lee)"
+      - "Forest Mensuration Lab (Advisor: Prof. Tzeng Yih, Lam)"
+      - "Thesis: Development of Smartphone Application for Horizontal Point Sampling and Upper Diameter Measurement (Advisor: Prof. Tzeng Yih, Lam & Prof. Su-Ting Cheng)"
+  - school: National Taiwan University
+    location: Taipei, Taiwan
+    degree: B.S. in Forestry and Resource Conservation
+    dates: Sep. 2017 – Jun. 2021
+    logo: education/NTU_1.jpg
+    description:
+      - "Forest Mensuration Lab (Advisor: Prof. Tzeng Yih, Lam)"
+      - Tablet app development for forest surveying & sampling
+
+

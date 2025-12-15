@@ -1,0 +1,62 @@
+{%- comment -%}
+Renders Education entries on the About page.
+
+Source of truth: `_data/about.yml` → `site.data.about.education`
+
+You can optionally override per-page by setting `education:` (array) in the page front matter.
+{%- endcomment -%}
+
+<div class="about-education">
+  {%- assign edu_list = page.education -%}
+  {%- if edu_list == nil or edu_list == true -%}
+    {%- assign edu_list = site.data.about.education -%}
+  {%- endif -%}
+
+  {%- for edu in edu_list -%}
+    <div class="about-education-item">
+      <div class="about-education-left">
+        {%- if edu.logo -%}
+          {%- assign edu_logo_path = edu.logo | prepend: 'assets/img/' -%}
+          {% include figure.html
+            path=edu_logo_path
+            class="about-education-logo"
+            alt=edu.school
+            zoomable=false
+            cache_bust=true -%}
+        {%- elsif edu.icon -%}
+          <i class="{{ edu.icon }} about-education-icon" aria-hidden="true"></i>
+        {%- else -%}
+          <i class="fas fa-graduation-cap about-education-icon" aria-hidden="true"></i>
+        {%- endif -%}
+      </div>
+
+      <div class="about-education-right">
+        <div class="about-education-header">
+          <div class="about-education-school">{{ edu.school }}</div>
+          {%- if edu.dates -%}
+            <div class="about-education-dates">{{ edu.dates }}</div>
+          {%- endif -%}
+        </div>
+
+        <div class="about-education-subheader">
+          {%- if edu.degree -%}
+            <div class="about-education-degree">{{ edu.degree }}</div>
+          {%- endif -%}
+          {%- if edu.location -%}
+            <div class="about-education-location">{{ edu.location }}</div>
+          {%- endif -%}
+        </div>
+
+        {%- if edu.description and edu.description.size > 0 -%}
+          <ul class="about-education-desc">
+            {%- for line in edu.description -%}
+              <li>{{ line }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endfor -%}
+</div>
+
+

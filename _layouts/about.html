@@ -6,7 +6,7 @@ layout: default
       <div class="post">
         <header class="post-header">
           <h1 class="post-title">
-            {% if site.title == "blank" -%}<span class="font-weight-bold">{{ site.first_name }}</span> {{ site.middle_name }} {{ site.last_name }}{%- else -%}{{ site.title }}{%- endif %}
+            {% if site.title == "blank" -%}<span class="font-weight-bold">{{ site.first_name }}</span> <span class="font-weight-bold">{{ site.middle_name }}</span> <span class="font-weight-bold">{{ site.last_name }}</span>{%- else -%}{{ site.title }}{%- endif %}
           </h1>
           <p class="desc">{{ page.subtitle }}</p>
         </header>
@@ -43,35 +43,46 @@ layout: default
             {{ content }}
           </div>
 
-          <!-- News -->
           {% if page.news and site.announcements.enabled -%}
-            <h2><a href="{{ '/news/' | relative_url }}" style="color: inherit;">news</a></h2>
-            {%- include news.html limit=true %}
+            <section class="about-section">
+              <h2><a href="{{ '/news/' | relative_url }}" style="color: inherit;">News</a></h2>
+              {%- include news.html limit=true %}
+            </section>
           {%- endif %}
 
           {% if page.latest_posts -%}
-            <h2><a href="{{ '/blog/' | relative_url }}" style="color: inherit;">Latest Posts</a></h2>
-            {%- include latest_posts.html %}
+            <section class="about-section">
+              <h2><a href="{{ '/blog/' | relative_url }}" style="color: inherit;">Latest Posts</a></h2>
+              {%- include latest_posts.html %}
+            </section>
           {%- endif %} 
-
           
           {% if page.selected_papers -%}
-            <h2><a href="{{ '/publications/' | relative_url }}" style="color: inherit;">Selected Publications</a></h2>
-            {%- include selected_papers.html %}
+            <section class="about-section">
+              <h2><a href="{{ '/publications/' | relative_url }}" style="color: inherit;">Selected Paper</a></h2>
+              {%- include selected_papers.html %}
+            </section>
           {%- endif %}
 
-          <h2>Where am I</h2>
+          {% if page.education and site.data.about and site.data.about.education and site.data.about.education.size > 0 -%}
+            <section class="about-section">
+              <h2>Education</h2>
+              {%- include about/education.html -%}
+            </section>
+          {%- endif %}
+          
           {%- if page.social %}
-            <div class="social">
-              <div class="contact-icons">
-                {% include social.html %}
+            <section class="about-section">
+              <h2>Where am I</h2>
+              <div class="social">
+                <div class="contact-icons">
+                  {% include social.html %}
+                </div>
+                <div class="contact-note">
+                  {{ site.contact_note }}
+                </div>
               </div>
-
-              <div class="contact-note">
-                {{ site.contact_note }}
-              </div>
-
-            </div>
+            </section>
           {%- endif %}
         </article>
 

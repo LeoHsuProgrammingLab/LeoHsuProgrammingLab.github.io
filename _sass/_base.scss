@@ -375,6 +375,43 @@ blockquote {
   }
 }
 
+// Floating side social bar
+.side-social {
+  position: fixed;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
+
+  background: var(--global-bg-color);
+  border: 1px solid var(--global-divider-color);
+  border-radius: 12px;
+  padding: 10px 10px;
+  opacity: 0.95;
+}
+
+.side-social-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 1.4rem;
+
+  a {
+    color: var(--global-text-color);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--global-theme-color);
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .side-social {
+    display: none;
+  }
+}
+
 .wechat-modal {
   display: none;
   position: fixed;
@@ -666,7 +703,7 @@ footer.sticky-bottom {
       .preview {
         width: 100%;
         min-width: 80px;
-        max-width: 200px;
+        max-width: 460px;
       }
 
       .abbr {
@@ -1058,5 +1095,123 @@ nav[data-toggle="toc"] {
     font-size: 0.875rem;
     margin-bottom: 0;
     padding-top: 0.5rem;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// About page sections (spacing + divider line)
+// -----------------------------------------------------------------------------
+
+.about-section {
+  margin-top: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--global-divider-color);
+}
+
+.about-section h2 {
+  margin-bottom: 1rem;
+}
+
+// -----------------------------------------------------------------------------
+// Education block (About page)
+// -----------------------------------------------------------------------------
+
+.about-education-item {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0;
+}
+
+.about-education-left {
+  width: 80px;
+  flex: 0 0 80px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 0.2rem;
+}
+
+.about-education-icon {
+  font-size: 2rem;
+  color: var(--global-text-color);
+}
+
+.about-education-logo {
+  max-width: 80px;
+  max-height: 80px;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.about-education-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.about-education-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.about-education-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 0.15rem;
+}
+
+.about-education-location {
+  color: var(--global-text-color-light);
+}
+
+.about-education-dates {
+  color: var(--global-text-color-light);
+  white-space: nowrap;
+}
+
+.about-education-school {
+  font-weight: 700;
+}
+
+.about-education-subheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.about-education-subheader .about-education-location {
+  text-align: right;
+}
+
+.about-education-degree {
+  font-weight: 500;
+}
+
+.about-education-desc {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-left: 1.1rem;
+}
+
+@media (max-width: 576px) {
+  .about-education-header {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .about-education-subheader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .about-education-subheader .about-education-location {
+    text-align: left;
+  }
+  .about-education-dates {
+    white-space: normal;
   }
 }

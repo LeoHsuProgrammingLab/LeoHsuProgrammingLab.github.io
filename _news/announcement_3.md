@@ -1,8 +1,7 @@
 ---
 layout: post
-date: 2016-01-15 07:59:00-0400
+date: 2021-06-30 01:01:00-0401
 inline: true
 related_posts: false
 ---
-
-A simple inline announcement with Markdown emoji! :sparkles: :smile:
+I Graduated from B.S. in Forestry and Resource Conservation at National Taiwan University!
