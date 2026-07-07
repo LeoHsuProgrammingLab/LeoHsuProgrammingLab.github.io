@@ -1,4 +1,12 @@
 education:
+  - school: Washington University in Saint Louis
+    location: St. Louis, MO, USA
+    degree: Ph.D. in Computer Science and Engineering
+    dates: Aug. 2026 – May. 2031 (expected)
+    # logo: education/WashU.jpg
+    description:
+      - "McKelvey School of Engineering"
+      - "Advisor: Prof. Nathan Jacobs"
   - school: Texas A&M University
     location: College Station, TX, USA
     degree: M.S. in Computer Science and Engineering

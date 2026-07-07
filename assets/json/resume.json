@@ -31,7 +31,9 @@
       "endDate": "2022-09-01",
       "summary": "Designing a Convolutional Neural Network (CNN) to implement anomaly detection in PCR machine. With dropout and test-time augmentation (TTA), I attained 98% accuracy.",
       "highlights": [
-        "CNN", "TTA", "Automatic Optical Inspection"
+        "CNN",
+        "TTA",
+        "Automatic Optical Inspection"
       ]
     },
     {
@@ -42,7 +44,9 @@
       "endDate": "2022-06-15",
       "summary": "Leading the experiments of forest measurement and sampling tools with 35 classmates.",
       "highlights": [
-        "Horizontal Point Sampling", "Tree Measurement", "Tree Volume Measurement"
+        "Horizontal Point Sampling",
+        "Tree Measurement",
+        "Tree Volume Measurement"
       ]
     },
     {
@@ -53,12 +57,34 @@
       "endDate": "current",
       "summary": "First, I utilized YOLOv7 to detect the patient's position in a monitoring system. Second, I extracted the features from patients' notes written by their families, and predict the potential of sarcopenia using LLM (Bert-Base-Chinese).",
       "highlights": [
-        "Object Detection", "Healthcare system", "LLM"
+        "Object Detection",
+        "Healthcare system",
+        "LLM"
       ]
     }
   ],
   "volunteer": [],
   "education": [
+    {
+      "institution": "Washington University in Saint Louis, Missouri, USA",
+      "url": "https://wustl.edu/",
+      "area": "Computer Science",
+      "studyType": "Ph.D.",
+      "startDate": "2026-08-01",
+      "endDate": "Present",
+      "score": "",
+      "courses": []
+    },
+    {
+      "institution": "Texas A&M University, College Station, Texas, USA",
+      "url": "https://www.tamu.edu/",
+      "area": "Computer Science and Engineering",
+      "studyType": "Master's Degree",
+      "startDate": "2024-08-19",
+      "endDate": "2026-05-09",
+      "score": "",
+      "courses": []
+    },
     {
       "institution": "National Taiwan University, Taipei, Taiwan",
       "url": "https://www.ntu.edu.tw/english/",
@@ -68,9 +94,10 @@
       "endDate": "2024-06-30",
       "score": "",
       "courses": [
-        "Deep Learning in Computer Vision", "Advanced Topic in Forest Sampling"
+        "Deep Learning in Computer Vision",
+        "Advanced Topic in Forest Sampling"
       ]
-    }, 
+    },
     {
       "institution": "National Taiwan University, Taipei, Taiwan",
       "url": "https://www.ntu.edu.tw/english/",
@@ -80,7 +107,10 @@
       "endDate": "2021-06-30",
       "score": "",
       "courses": [
-        "Data Structure and Algorithm", "Database Management System", "Forest Mensuration", "Forest Sampling"
+        "Data Structure and Algorithm",
+        "Database Management System",
+        "Forest Mensuration",
+        "Forest Sampling"
       ]
     }
   ],
@@ -107,7 +137,7 @@
     {
       "language": "Japanese",
       "fluency": "Elementary"
-    }, 
+    },
     {
       "language": "Taiwanese",
       "fluency": "Fluent"
