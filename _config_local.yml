@@ -1,0 +1,8 @@
+# Local development overrides
+# Excludes assets that require external tools (e.g. Jupyter) not installed locally
+exclude:
+  - bin
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - assets/jupyter

@@ -17,12 +17,23 @@ You can optionally override per-page by setting `education:` (array) in the page
       <div class="about-education-left">
         {%- if edu.logo -%}
           {%- assign edu_logo_path = edu.logo | prepend: 'assets/img/' -%}
-          {% include figure.html
-            path=edu_logo_path
-            class="about-education-logo"
-            alt=edu.school
-            zoomable=false
-            cache_bust=true -%}
+          {%- if edu.logo_size -%}
+            {% include figure.html
+              path=edu_logo_path
+              class="about-education-logo"
+              width=edu.logo_size
+              height=edu.logo_size
+              alt=edu.school
+              zoomable=false
+              cache_bust=true -%}
+          {%- else -%}
+            {% include figure.html
+              path=edu_logo_path
+              class="about-education-logo"
+              alt=edu.school
+              zoomable=false
+              cache_bust=true -%}
+          {%- endif -%}
         {%- elsif edu.icon -%}
           <i class="{{ edu.icon }} about-education-icon" aria-hidden="true"></i>
         {%- else -%}
