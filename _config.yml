@@ -74,6 +74,7 @@ mastodon_username: # your mastodon instance+username in the format instance.tld/
 linkedin_username: chih-chuan-hsu # your LinkedIn user name
 telegram_username: # your Telegram user name
 scholar_userid: 2Ghl2sgAAAAJ&hl=en # your Google Scholar ID
+cv_url: https://drive.google.com/file/d/1DBOMaoKmCEpMTcIyT4-EzIlYZhgznzjx/view?usp=sharing # CV on Google Drive — update via "Manage versions" to keep this link permanent
 semanticscholar_id: # your Semantic Scholar ID
 whatsapp_number: # your WhatsApp number (full phone number in international format. Omit any zeroes, brackets, or dashes when adding the phone number in international format.)
 orcid_id: # your ORCID ID
