@@ -1,0 +1,123 @@
+/*******************************************************************************
+ * Visited-states map
+ ******************************************************************************/
+
+.visited-states-map {
+  margin: 1.5rem 0 2rem;
+
+  &__frame {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+
+    // ".state" is only set on the wrapping <g> (and on the DC circle); its
+    // fill is inherited by the individual, otherwise-unstyled state paths.
+    .state {
+      fill: var(--map-base-color);
+      stroke: var(--global-bg-color);
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+    }
+
+    .state path,
+    circle.state {
+      transition: fill 0.15s ease;
+    }
+
+    .visited {
+      fill: var(--global-theme-color);
+    }
+
+    .state path:not(.borders):hover,
+    circle.state:not(.borders):hover {
+      fill: var(--map-hover-color);
+      cursor: pointer;
+    }
+
+    .state path.visited:hover {
+      fill: var(--global-hover-color);
+    }
+
+    .borders {
+      fill: none;
+      stroke: var(--global-bg-color);
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .dccircle {
+      stroke-width: 1;
+    }
+
+    .separator1 {
+      fill: none;
+      stroke: var(--global-divider-color);
+      stroke-width: 1.5;
+      pointer-events: none;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.75rem;
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    font-size: 0.85rem;
+    color: var(--global-text-color-light);
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__swatch {
+    display: inline-block;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 3px;
+    background-color: var(--map-base-color);
+
+    &--visited {
+      background-color: var(--global-theme-color);
+    }
+  }
+
+  &__caption {
+    text-align: center;
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: var(--global-text-color-light);
+  }
+
+  &__tooltip {
+    position: fixed;
+    z-index: 20;
+    pointer-events: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    background-color: var(--global-theme-color);
+    color: var(--global-hover-text-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, -130%);
+    transition: opacity 0.1s ease;
+
+    &.is-visible {
+      opacity: 1;
+    }
+  }
+}

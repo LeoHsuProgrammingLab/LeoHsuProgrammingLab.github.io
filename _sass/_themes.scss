@@ -30,6 +30,9 @@
   --global-danger-block-text: #600;
   --global-danger-block-title: #c00;
 
+  --map-base-color: #dde1e7;
+  --map-hover-color: #{darken(#dde1e7, 8%)};
+
   .fa-sun {
     display : none;
   }
@@ -74,6 +77,9 @@ html[data-theme='dark'] {
   --global-danger-block-bg: #ffe0e0;
   --global-danger-block-text: #600;
   --global-danger-block-title: #c00;
+
+  --map-base-color: #2f3136;
+  --map-hover-color: #{lighten(#2f3136, 8%)};
 
   .fa-sun {
     padding-left: 10px;
