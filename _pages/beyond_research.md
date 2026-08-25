@@ -16,6 +16,6 @@ I was a student-athlete when I studied in bachelor's degree at NTU. I had been t
 
 I have been a Lakers fan since the 2007-08 season. My favorite player is Kobe Bryant (Mamba Mentality). After he retired, I enjoyed Rajon Rondo's game. Besides, I love tactics design, especially for zone defense, full court press & break, and 5-out motion offense.
 
-### **States I've Been**
+### **My US Travel Map**
 
 {% include us_visited_states_map.html %}
