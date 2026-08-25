@@ -57,6 +57,22 @@
       stroke-width: 1;
     }
 
+    .landmark {
+      fill: var(--global-bg-color);
+      stroke: var(--map-pin-unvisited-color);
+      stroke-width: 2;
+      transition: r 0.15s ease, stroke 0.15s ease;
+      cursor: pointer;
+    }
+
+    .landmark.visited {
+      stroke: var(--map-pin-visited-color);
+    }
+
+    .landmark:hover {
+      r: 6;
+    }
+
     .separator1 {
       fill: none;
       stroke: var(--global-divider-color);
@@ -91,6 +107,16 @@
 
     &--visited {
       background-color: var(--global-theme-color);
+    }
+
+    &--pin {
+      border-radius: 50%;
+      background-color: var(--global-bg-color);
+      border: 2px solid var(--map-pin-unvisited-color);
+    }
+
+    &--pin-visited {
+      border-color: var(--map-pin-visited-color);
     }
   }
 

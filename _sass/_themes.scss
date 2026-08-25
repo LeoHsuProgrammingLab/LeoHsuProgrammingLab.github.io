@@ -32,6 +32,8 @@
 
   --map-base-color: #dde1e7;
   --map-hover-color: #{darken(#dde1e7, 8%)};
+  --map-pin-unvisited-color: #8b93a1;
+  --map-pin-visited-color: #1ea54c;
 
   .fa-sun {
     display : none;
@@ -80,6 +82,8 @@ html[data-theme='dark'] {
 
   --map-base-color: #2f3136;
   --map-hover-color: #{lighten(#2f3136, 8%)};
+  --map-pin-unvisited-color: #b7bec9;
+  --map-pin-visited-color: #4ade80;
 
   .fa-sun {
     padding-left: 10px;
