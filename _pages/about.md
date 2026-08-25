@@ -19,7 +19,7 @@ education: true
 ---
 **Research Focus: 3D Computer Vision**, **Generative Modeling**, and **Computer Vision for Ecology**
 
-I am a first-year CS PhD student at Washington University in Saint Louis, advised by Prof. [Nathan Jacobs](https://jacobsn.github.io/). Super excited to join [MVRL](https://mvrl.cse.wustl.edu/)! 
+I am a first-year CS PhD student at Washington University in Saint Louis, advised by Prof. [Nathan Jacobs](https://jacobsn.github.io/). Super excited to join [MVRL](http://mvrl.washu.edu/)! 
 
 Previously, I was a MSCS student at Texas A&M University (TAMU). I was fortunate to be advised by Prof. [Cheng Zhang](https://czhang0528.github.io/) in TAMU Visual AI Lab, and we worked on **taxonomy-aware fine-grained image generation** and **uncertainty-aware dynamic 3D reconstruction**. During 2025 summer, we also explored **video surveillance with multi-object tracking and real-time localization in constrained healthcare environment**.
 
