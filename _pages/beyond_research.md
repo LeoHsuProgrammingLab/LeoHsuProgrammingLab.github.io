@@ -8,7 +8,7 @@ nav_order: 3
 ---
 ### **Athlete Mindset**
 
-> “The truth is you don’t need most stars, hype, or rankings. Just your discipline, heart, and people who believe in you, and you need to believe in your own ability.”
+> “The truth is you don’t need most stars, hype, or rankings. Just your discipline, heart, and people who believe in you. And you need to believe in your own ability.”
 >
 > — Fernando Mendoza, 2025 Heisman Trophy
 
