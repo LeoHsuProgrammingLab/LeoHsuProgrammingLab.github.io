@@ -1,0 +1,178 @@
+{%- comment -%}
+  Photo collage, grouped country -> state or province -> city.
+
+  The folder tree under assets/img/gallery/ mirrors that hierarchy, with spaces
+  written as hyphens, so a path follows from the names in _data/travel.yml with
+  nothing to configure. A level with no photos of its own is skipped, and a city
+  whose name matches its country collapses onto the country folder, so the
+  hierarchy never shows an empty rung.
+{%- endcomment -%}
+
+{%- assign tm = site.data.travel -%}
+{%- assign photo_exts = ".jpg,.jpeg,.png,.JPG,.JPEG,.PNG" | split: "," -%}
+{%- assign gallery_root = "/assets/img/gallery/" -%}
+{%- assign all_photos = site.static_files | where_exp: "f", "f.path contains gallery_root" | where_exp: "f", "photo_exts contains f.extname" -%}
+{%- assign total_photos = all_photos | size -%}
+{%- assign us_name = tm.us_country | default: "United States" -%}
+{%- assign us_dir = gallery_root | append: us_name | append: "/" | replace: " ", "-" -%}
+
+<div class="travel-gallery" id="travel-gallery">
+  {%- if total_photos > 0 -%}
+
+    {%- if tm.gallery_intro -%}
+      <p class="travel-gallery__intro">{{ tm.gallery_intro }}</p>
+    {%- endif -%}
+
+    {%- comment -%} Chip counts are whole-subtree counts, unlike the per-level grids. {%- endcomment -%}
+    {%- assign us_count = all_photos | where_exp: "f", "f.path contains us_dir" | size -%}
+
+    <div class="travel-gallery__filters" role="group" aria-label="Filter photos by country">
+      <button type="button" class="travel-gallery__chip is-active" data-filter="all" aria-pressed="true">
+        All <span class="travel-gallery__chip-count">{{ total_photos }}</span>
+      </button>
+      {%- if us_count > 0 -%}
+        <button type="button" class="travel-gallery__chip" data-filter="{{ us_name }}" aria-pressed="false">
+          {{ us_name }} <span class="travel-gallery__chip-count">{{ us_count }}</span>
+        </button>
+      {%- endif -%}
+      {%- for c in tm.abroad -%}
+        {%- assign cdir = gallery_root | append: c.country | append: "/" | replace: " ", "-" -%}
+        {%- assign n = all_photos | where_exp: "f", "f.path contains cdir" | size -%}
+        {%- if n > 0 -%}
+          <button type="button" class="travel-gallery__chip" data-filter="{{ c.country }}" aria-pressed="false">
+            {{ c.country }} <span class="travel-gallery__chip-count">{{ n }}</span>
+          </button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} ===================== United States ===================== {%- endcomment -%}
+    {%- if us_count > 0 -%}
+      <section class="travel-gallery__country" data-country="{{ us_name }}">
+        <h4 class="travel-gallery__country-name">{{ us_name }}</h4>
+
+        {%- capture n -%}{% include travel_photo_count.html dir=us_dir %}{%- endcapture -%}
+        {%- if n != "0" -%}
+          <div class="travel-gallery__group">
+            {% include travel_gallery_grid.html dir=us_dir label=us_name tm=tm %}
+          </div>
+        {%- endif -%}
+
+        {%- for st in tm.visited_states -%}
+          {%- assign state_name = site.data.us_states[st.code] | default: st.code -%}
+          {%- assign sdir = us_dir | append: state_name | append: "/" | replace: " ", "-" -%}
+          {%- capture sn -%}{% include travel_photo_count.html dir=sdir %}{%- endcapture -%}
+          {%- assign city_total = 0 -%}
+          {%- for ci in st.cities -%}
+            {%- assign cidir = sdir | append: ci.name | append: "/" | replace: " ", "-" -%}
+            {%- capture cn -%}{% include travel_photo_count.html dir=cidir %}{%- endcapture -%}
+            {%- assign city_total = city_total | plus: cn -%}
+          {%- endfor -%}
+          {%- if sn != "0" or city_total > 0 -%}
+            <div class="travel-gallery__group">
+              <h5 class="travel-gallery__group-name">{{ state_name }}</h5>
+              {%- if sn != "0" -%}
+                {% include travel_gallery_grid.html dir=sdir label=state_name tm=tm %}
+              {%- endif -%}
+              {%- for ci in st.cities -%}
+                {%- assign cidir = sdir | append: ci.name | append: "/" | replace: " ", "-" -%}
+                {%- capture cn -%}{% include travel_photo_count.html dir=cidir %}{%- endcapture -%}
+                {%- if cn != "0" -%}
+                  <div class="travel-gallery__subgroup">
+                    <h6 class="travel-gallery__city-name">{{ ci.name }}</h6>
+                    {% include travel_gallery_grid.html dir=cidir label=ci.name tm=tm %}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </section>
+    {%- endif -%}
+
+    {%- comment -%} ===================== everywhere else ===================== {%- endcomment -%}
+    {%- for c in tm.abroad -%}
+      {%- assign cdir = gallery_root | append: c.country | append: "/" | replace: " ", "-" -%}
+      {%- assign country_count = all_photos | where_exp: "f", "f.path contains cdir" | size -%}
+      {%- if country_count > 0 -%}
+        <section class="travel-gallery__country" data-country="{{ c.country }}">
+          <h4 class="travel-gallery__country-name">{{ c.country }}</h4>
+
+          {%- capture n -%}{% include travel_photo_count.html dir=cdir %}{%- endcapture -%}
+          {%- if n != "0" -%}
+            <div class="travel-gallery__group">
+              {% include travel_gallery_grid.html dir=cdir label=c.country tm=tm %}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} cities with no province sit straight under the country {%- endcomment -%}
+          {%- for ci in c.cities -%}
+            {%- unless ci.region or ci.name == c.country -%}
+              {%- assign cidir = cdir | append: ci.name | append: "/" | replace: " ", "-" -%}
+              {%- capture cn -%}{% include travel_photo_count.html dir=cidir %}{%- endcapture -%}
+              {%- if cn != "0" -%}
+                <div class="travel-gallery__group">
+                  <h5 class="travel-gallery__group-name">{{ ci.name }}</h5>
+                  {% include travel_gallery_grid.html dir=cidir label=ci.name tm=tm %}
+                </div>
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+
+          {%- comment -%} then the provinces, with their cities nested inside {%- endcomment -%}
+          {%- assign regions = c.cities | map: "region" | compact | uniq -%}
+          {%- for region in regions -%}
+            {%- assign rdir = cdir | append: region | append: "/" | replace: " ", "-" -%}
+            {%- assign in_region = c.cities | where: "region", region -%}
+            {%- assign region_total = 0 -%}
+            {%- capture rn -%}{% include travel_photo_count.html dir=rdir %}{%- endcapture -%}
+            {%- assign region_total = region_total | plus: rn -%}
+            {%- for ci in in_region -%}
+              {%- assign cidir = rdir | append: ci.name | append: "/" | replace: " ", "-" -%}
+              {%- capture cn -%}{% include travel_photo_count.html dir=cidir %}{%- endcapture -%}
+              {%- assign region_total = region_total | plus: cn -%}
+            {%- endfor -%}
+            {%- if region_total > 0 -%}
+              <div class="travel-gallery__group">
+                <h5 class="travel-gallery__group-name">{{ region }}</h5>
+                {%- if rn != "0" -%}
+                  {% include travel_gallery_grid.html dir=rdir label=region tm=tm %}
+                {%- endif -%}
+                {%- for ci in in_region -%}
+                  {%- assign cidir = rdir | append: ci.name | append: "/" | replace: " ", "-" -%}
+                  {%- capture cn -%}{% include travel_photo_count.html dir=cidir %}{%- endcapture -%}
+                  {%- if cn != "0" -%}
+                    <div class="travel-gallery__subgroup">
+                      <h6 class="travel-gallery__city-name">{{ ci.name }}</h6>
+                      {% include travel_gallery_grid.html dir=cidir label=ci.name tm=tm %}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <p class="travel-gallery__empty-filter" id="travel-gallery-none" hidden>No photos from there yet.</p>
+
+  {%- else -%}
+
+    <div class="travel-gallery__placeholder">
+      <p class="travel-gallery__placeholder-title">The collage is wired up and waiting on photos.</p>
+      <p class="travel-gallery__placeholder-body">
+        The folders under <code>assets/img/gallery/</code> mirror the grouping:
+        country, then state or province, then city. Drop images into
+        <code>United-States/Colorado/</code> or <code>Japan/Tokyo/</code> and they
+        appear here and in the map hover cards automatically. Captions are optional
+        and live under <code>photo_captions</code> in <code>_data/travel.yml</code>.
+      </p>
+    </div>
+
+  {%- endif -%}
+</div>
+
+{%- if total_photos > 0 -%}
+  <script defer src="{{ '/assets/js/travel_gallery.js' | relative_url | bust_file_cache }}"></script>
+{%- endif -%}

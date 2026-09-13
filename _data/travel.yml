@@ -1,0 +1,127 @@
+# ---------------------------------------------------------------------------
+# US travel map + photo collage
+# Rendered by _includes/us_visited_states_map.html and _includes/travel_gallery.html
+#
+# Adding a state:   append a `- code: XX` entry under `visited_states`.
+# Adding photos:    drop image files into assets/img/gallery/XX/ (XX = state code).
+#                   They are picked up automatically, no config needed.
+# Ticking a park:   flip `visited: false` to `true` in _data/national_parks.yml.
+# ---------------------------------------------------------------------------
+
+# The map has two framings, picked with the World / USA buttons.
+#   world -> everything that is lit up, from Brazil to Taiwan
+#   usa   -> the lower 48, where the state and park detail lives
+map:
+  default_view: world
+  # Tight around what is actually lit up: Colorado in the west, Japan in the
+  # east, Rio in the south.
+  world_bounds:
+    southwest: [-26.0, -115.0]
+    northeast: [45.0, 143.0]
+  bounds:
+    southwest: [24.2, -125.5]
+    northeast: [49.6, -66.5]
+  min_zoom: 0 # a phone-width map needs to zoom right out to fit the world framing
+  max_zoom: 14
+  # Which basemap is showing when the page loads: satellite | terrain | minimal
+  default_basemap: satellite
+  # Place names from the tile provider. Off by default: they crowd the imagery,
+  # and visited states get their own label anyway.
+  show_labels: false
+  # The 61 national park pins. Turn off for a cleaner map.
+  show_parks: true
+  # Photos shown inside the hover card (the rest stay in the collage below).
+  hover_photo_limit: 5
+
+# States you have actually set foot in, by two-letter postal code.
+# `note` is optional; it shows up in the hover card and on the photo collage.
+# US states. Each one is a `region` under United States in the collage, and can
+# carry its own `cities:` list in the same form as the `abroad` entries below.
+visited_states:
+  - code: MO
+    note: Home base for the PhD.
+  - code: TX
+    note:
+  - code: AR
+    note:
+  - code: CO
+    note:
+
+# The name the US appears under, in the collage and in the folder tree.
+us_country: United States
+
+# Everything outside the US, grouped the way the photo collage reads it:
+# country, then state or province, then city.
+#
+#   country  top-level heading, and the chip in the collage filter bar
+#   shape    Natural Earth country name. Present means the whole country gets
+#            highlighted on the map. Leave it out for a country you have only
+#            passed through a city of.
+#   region   optional middle level, for a state or province.
+#
+# PHOTO FOLDERS mirror this tree under assets/img/gallery/, with spaces written
+# as hyphens. Nothing to configure; the path follows from the names above:
+#
+#   assets/img/gallery/United-States/Colorado/
+#   assets/img/gallery/Taiwan/                     <- anywhere in the country
+#   assets/img/gallery/Taiwan/Changhua-County/Changhua/
+#   assets/img/gallery/Japan/Tokyo/                <- no region, so no middle level
+#   assets/img/gallery/Hong-Kong/                  <- city name matches the country
+#   assets/img/gallery/Brazil/Rio-de-Janeiro/
+#
+# After adding or removing a `shape:` run:
+#   python3 bin/build_country_shapes.py
+abroad:
+  - country: Taiwan
+    shape: Taiwan
+    note: Home.
+    cities:
+      - name: Changhua
+        region: Changhua County
+        lat: 24.0667
+        lng: 120.5333
+        home: true
+        note: Hometown.
+
+  - country: Japan
+    cities:
+      - name: Tokyo
+        lat: 35.6894
+        lng: 139.6917
+      - name: Osaka
+        lat: 34.6938
+        lng: 135.5021
+
+  - country: Hong Kong
+    cities:
+      - name: Hong Kong
+        lat: 22.2783
+        lng: 114.1586
+
+  - country: China
+    cities:
+      - name: Shanghai
+        lat: 31.2325
+        lng: 121.4692
+      - name: Beijing
+        lat: 39.9040
+        lng: 116.4075
+
+  # No `shape:` here: only Rio was visited, so Brazil gets a city pin rather
+  # than the whole country lit up.
+  - country: Brazil
+    cities:
+      - name: Rio de Janeiro
+        lat: -22.9111
+        lng: -43.2056
+
+# Optional captions for individual photos, keyed by file name.
+# Example:
+#   photo_captions:
+#     "gateway-arch-sunrise.jpg": Sunrise under the Arch, 6:10 am.
+photo_captions: {}
+
+# Shown under the collage. Leave blank to hide.
+gallery_intro: >
+  Shot on the road between conferences and long weekends.
+  Hover a lit-up place on the map to see where each frame came from.

@@ -1,0 +1,12 @@
+{%- comment -%}
+  The Blog entry in the nav bar. Rendered by _includes/header.html at the slot
+  given by `blog_nav_order` in _config.yml, and only when `blog_nav_title` is
+  set, so the blog can stay hidden until there is something to read.
+{%- endcomment -%}
+<li class="nav-item {% if page.url contains 'blog' %}active{% endif %}">
+  <a class="nav-link" href="{{ '/blog/' | relative_url }}">{{ site.blog_nav_title }}
+    {%- if page.url contains 'blog' -%}
+    <span class="sr-only">(current)</span>
+    {%- endif -%}
+  </a>
+</li>

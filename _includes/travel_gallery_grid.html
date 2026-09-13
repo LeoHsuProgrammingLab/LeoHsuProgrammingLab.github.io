@@ -1,0 +1,40 @@
+{%- comment -%}
+  One masonry block: the photos sitting directly in `dir`.
+  Params: dir (gallery folder path, trailing slash), label (alt fallback),
+  tm (travel data, for captions).
+{%- endcomment -%}
+{%- assign inc_exts = ".jpg,.jpeg,.png,.JPG,.JPEG,.PNG" | split: "," -%}
+{%- assign inc_dir = include.dir -%}
+{%- assign inc_tm = include.tm -%}
+{%- assign subtree = site.static_files | where_exp: "f", "f.path contains inc_dir" | where_exp: "f", "inc_exts contains f.extname" | sort: "path" -%}
+<div class="travel-gallery__grid">
+  {%- for f in subtree -%}
+    {%- assign expect = inc_dir | append: f.name -%}
+    {%- if f.path == expect -%}
+      {%- assign caption = inc_tm.photo_captions[f.name] -%}
+      {%- assign base = inc_dir | append: f.basename -%}
+      <figure class="travel-gallery__item">
+        <picture>
+          {%- if site.imagemagick.enabled -%}
+            <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="{{ base | append: '-480.webp' | relative_url }}" />
+            <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="{{ base | append: '-800.webp' | relative_url }}" />
+            <source class="responsive-img-srcset" srcset="{{ base | append: '-1400.webp' | relative_url }}" />
+          {%- endif -%}
+          <img
+            src="{{ f.path | relative_url }}"
+            alt="{{ caption | default: include.label | escape }}"
+            loading="lazy"
+            decoding="async"
+            data-zoomable
+            onerror="this.onerror=null; var p=this.closest('picture'); if (p) { p.querySelectorAll('.responsive-img-srcset').forEach(function(s){ s.remove(); }); }"
+          />
+        </picture>
+        {%- if caption -%}
+          <figcaption class="travel-gallery__caption">
+            <span class="travel-gallery__note">{{ caption }}</span>
+          </figcaption>
+        {%- endif -%}
+      </figure>
+    {%- endif -%}
+  {%- endfor -%}
+</div>

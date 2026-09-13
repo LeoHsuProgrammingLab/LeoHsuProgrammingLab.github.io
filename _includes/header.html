@@ -51,21 +51,17 @@
                   {%- endif -%}
                 </a>
               </li>
-              {% if site.blog_nav_title %}
-              <!-- Blog -->
-              <li class="nav-item {% if page.url contains 'blog' %}active{% endif %}">
-                <a class="nav-link" href="{{ '/blog/' | relative_url }}">{{ site.blog_nav_title }}
-                  {%- if page.url contains 'blog' -%}
-                  <span class="sr-only">(current)</span>
-                  {%- endif -%}
-                </a>
-              </li>
-              {%- endif %}
 
               <!-- Other pages -->
               {%- assign sorted_pages = site.pages | sort: "nav_order" -%}
+              {%- assign blog_slot = site.blog_nav_order | default: 2.5 -%}
+              {%- assign blog_placed = false -%}
               {%- for p in sorted_pages -%}
                 {%- if p.nav and p.autogen == nil -%}
+                  {%- if site.blog_nav_title and blog_placed == false and p.nav_order > blog_slot -%}
+                    {% include nav_blog_link.html %}
+                    {%- assign blog_placed = true -%}
+                  {%- endif -%}
                   {%- if p.dropdown %}
                     <li class="nav-item dropdown {% if page.title == p.title %}active{% endif %}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ p.title }}
@@ -98,6 +94,9 @@
                   {%- endif -%}
                 {%- endif -%}
               {% endfor -%}
+              {%- if site.blog_nav_title and blog_placed == false -%}
+                {% include nav_blog_link.html %}
+              {%- endif -%}
 
               {%- if site.enable_darkmode %}
               <!-- Toogle theme mode -->

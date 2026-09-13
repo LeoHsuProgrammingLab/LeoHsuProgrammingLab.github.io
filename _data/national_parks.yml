@@ -1,0 +1,371 @@
+# US national parks plotted on the travel map (_includes/us_visited_states_map.html).
+# Coordinates come from Wikidata; `state` is derived by point-in-polygon against
+# assets/json/us-states.geojson. To tick a park off, flip `visited: false` to true.
+# `gateway` is the nearest town people usually stage from.
+
+- name: Denali National Park
+  state: AK
+  lat: 63.3411
+  lng: -150.7341
+  gateway: Healy, AK
+  visited: false
+- name: Gates of the Arctic National Park
+  state: AK
+  lat: 67.7833
+  lng: -153.3
+  gateway: Bettles, AK
+  visited: false
+- name: Glacier Bay National Park
+  state: AK
+  lat: 58.7
+  lng: -137.0
+  gateway: Gustavus, AK
+  visited: false
+- name: Katmai National Park
+  state: AK
+  lat: 58.5
+  lng: -155.0
+  gateway: King Salmon, AK
+  visited: false
+- name: Kenai Fjords National Park
+  state: AK
+  lat: 59.9178
+  lng: -149.9875
+  gateway: Seward, AK
+  visited: false
+- name: Kobuk Valley National Park
+  state: AK
+  lat: 67.55
+  lng: -159.2833
+  gateway: Kotzebue, AK
+  visited: false
+- name: Lake Clark National Park
+  state: AK
+  lat: 60.9667
+  lng: -153.4167
+  gateway: Port Alsworth, AK
+  visited: false
+- name: Wrangell-St. Elias National Park
+  state: AK
+  lat: 61.435
+  lng: -142.9536
+  gateway: Copper Center, AK
+  visited: false
+- name: Hot Springs National Park
+  state: AR
+  lat: 34.5136
+  lng: -93.0536
+  gateway: Hot Springs, AR
+  visited: false
+- name: Grand Canyon National Park
+  state: AZ
+  lat: 36.0553
+  lng: -112.122
+  gateway: Tusayan, AZ
+  visited: false
+- name: Petrified Forest National Park
+  state: AZ
+  lat: 35.0881
+  lng: -109.806
+  gateway: Holbrook, AZ
+  visited: false
+- name: Saguaro National Park
+  state: AZ
+  lat: 32.2022
+  lng: -110.6109
+  gateway: Tucson, AZ
+  visited: false
+- name: Channel Islands National Park
+  state: CA
+  lat: 33.66
+  lng: -119.64
+  gateway: Ventura, CA
+  visited: false
+- name: Death Valley National Park
+  state: CA
+  lat: 36.45
+  lng: -116.85
+  gateway: Furnace Creek, CA
+  visited: false
+- name: Joshua Tree National Park
+  state: CA
+  lat: 33.8734
+  lng: -115.901
+  gateway: Twentynine Palms, CA
+  visited: false
+- name: Kings Canyon National Park
+  state: CA
+  lat: 36.7893
+  lng: -118.6729
+  gateway: Three Rivers, CA
+  visited: false
+- name: Lassen Volcanic National Park
+  state: CA
+  lat: 40.4981
+  lng: -121.4275
+  gateway: Mineral, CA
+  visited: false
+- name: Pinnacles National Park
+  state: CA
+  lat: 36.4869
+  lng: -121.167
+  gateway: Soledad, CA
+  visited: false
+- name: Redwood National Park
+  state: CA
+  lat: 41.5292
+  lng: -124.0583
+  gateway: Crescent City, CA
+  visited: false
+- name: Sequoia National Park
+  state: CA
+  lat: 36.5647
+  lng: -118.7728
+  gateway: Three Rivers, CA
+  visited: false
+- name: Yosemite National Park
+  state: CA
+  lat: 37.7425
+  lng: -119.5375
+  gateway: Mariposa, CA
+  visited: false
+- name: Black Canyon of the Gunnison National Park
+  state: CO
+  lat: 38.58
+  lng: -107.7275
+  gateway: Montrose, CO
+  visited: false
+- name: Great Sand Dunes National Park
+  state: CO
+  lat: 37.7765
+  lng: -105.6289
+  gateway: Alamosa, CO
+  visited: false
+- name: Mesa Verde National Park
+  state: CO
+  lat: 37.2604
+  lng: -108.4944
+  gateway: Cortez, CO
+  visited: false
+- name: Rocky Mountain National Park
+  state: CO
+  lat: 40.35
+  lng: -105.6833
+  gateway: Estes Park, CO
+  visited: true
+- name: Biscayne National Park
+  state: FL
+  lat: 25.5019
+  lng: -80.181
+  gateway: Homestead, FL
+  visited: false
+- name: Dry Tortugas National Park
+  state: FL
+  lat: 24.6286
+  lng: -82.8733
+  gateway: Key West, FL
+  visited: false
+- name: Everglades National Park
+  state: FL
+  lat: 25.3125
+  lng: -80.6875
+  gateway: Homestead, FL
+  visited: false
+- name: Haleakala National Park
+  state: HI
+  lat: 20.7204
+  lng: -156.1551
+  gateway: Kula, HI
+  visited: false
+- name: Hawaii Volcanoes National Park
+  state: HI
+  lat: 19.4008
+  lng: -155.1236
+  gateway: Volcano, HI
+  visited: false
+- name: Indiana Dunes National Park
+  state: IN
+  lat: 41.6481
+  lng: -87.1081
+  gateway: Chesterton, IN
+  visited: false
+- name: Mammoth Cave National Park
+  state: KY
+  lat: 37.1869
+  lng: -86.1011
+  gateway: Cave City, KY
+  visited: false
+- name: Acadia National Park
+  state: ME
+  lat: 44.35
+  lng: -68.2167
+  gateway: Bar Harbor, ME
+  visited: false
+- name: Isle Royale National Park
+  state: MI
+  lat: 47.9959
+  lng: -88.9093
+  gateway: Houghton, MI
+  visited: false
+- name: Voyageurs National Park
+  state: MN
+  lat: 48.5
+  lng: -92.8833
+  gateway: International Falls, MN
+  visited: false
+- name: Gateway Arch National Park
+  state: MO
+  lat: 38.6246
+  lng: -90.185
+  gateway: St. Louis, MO
+  visited: true
+- name: Glacier National Park
+  state: MT
+  lat: 48.755
+  lng: -113.8
+  gateway: West Glacier, MT
+  visited: false
+- name: Great Smoky Mountains National Park
+  state: NC
+  lat: 35.6111
+  lng: -83.425
+  gateway: Gatlinburg, TN
+  visited: false
+- name: Theodore Roosevelt National Park
+  state: ND
+  lat: 46.9667
+  lng: -103.45
+  gateway: Medora, ND
+  visited: false
+- name: Carlsbad Caverns National Park
+  state: NM
+  lat: 32.1753
+  lng: -104.4439
+  gateway: Carlsbad, NM
+  visited: false
+- name: White Sands National Park
+  state: NM
+  lat: 32.7797
+  lng: -106.1717
+  gateway: Alamogordo, NM
+  visited: false
+- name: Great Basin National Park
+  state: NV
+  lat: 39.0058
+  lng: -114.2197
+  gateway: Baker, NV
+  visited: false
+- name: Cuyahoga Valley National Park
+  state: OH
+  lat: 41.2417
+  lng: -81.5497
+  gateway: Akron, OH
+  visited: false
+- name: Crater Lake National Park
+  state: OR
+  lat: 42.9119
+  lng: -122.1481
+  gateway: Klamath Falls, OR
+  visited: false
+- name: Congaree National Park
+  state: SC
+  lat: 33.7833
+  lng: -80.7833
+  gateway: Columbia, SC
+  visited: false
+- name: Badlands National Park
+  state: SD
+  lat: 43.75
+  lng: -102.5
+  gateway: Wall, SD
+  visited: false
+- name: Wind Cave National Park
+  state: SD
+  lat: 43.5564
+  lng: -103.4787
+  gateway: Hot Springs, SD
+  visited: false
+- name: Big Bend National Park
+  state: TX
+  lat: 29.25
+  lng: -103.25
+  gateway: Terlingua, TX
+  visited: false
+- name: Guadalupe Mountains National Park
+  state: TX
+  lat: 31.9167
+  lng: -104.8667
+  gateway: Carlsbad, NM
+  visited: false
+- name: Arches National Park
+  state: UT
+  lat: 38.7281
+  lng: -109.54
+  gateway: Moab, UT
+  visited: false
+- name: Bryce Canyon National Park
+  state: UT
+  lat: 37.64
+  lng: -112.17
+  gateway: Bryce Canyon City, UT
+  visited: false
+- name: Canyonlands National Park
+  state: UT
+  lat: 38.1669
+  lng: -109.76
+  gateway: Moab, UT
+  visited: false
+- name: Capitol Reef National Park
+  state: UT
+  lat: 38.2
+  lng: -111.167
+  gateway: Torrey, UT
+  visited: false
+- name: Zion National Park
+  state: UT
+  lat: 37.2026
+  lng: -112.9878
+  gateway: Springdale, UT
+  visited: false
+- name: Shenandoah National Park
+  state: VA
+  lat: 38.5333
+  lng: -78.35
+  gateway: Front Royal, VA
+  visited: false
+- name: Mount Rainier National Park
+  state: WA
+  lat: 46.85
+  lng: -121.75
+  gateway: Ashford, WA
+  visited: false
+- name: North Cascades National Park
+  state: WA
+  lat: 48.4831
+  lng: -120.9114
+  gateway: Marblemount, WA
+  visited: false
+- name: Olympic National Park
+  state: WA
+  lat: 47.7
+  lng: -123.75
+  gateway: Port Angeles, WA
+  visited: false
+- name: New River Gorge National Park
+  state: WV
+  lat: 37.8833
+  lng: -81.0667
+  gateway: Fayetteville, WV
+  visited: false
+- name: Grand Teton National Park
+  state: WY
+  lat: 43.8333
+  lng: -110.7008
+  gateway: Jackson, WY
+  visited: false
+- name: Yellowstone National Park
+  state: WY
+  lat: 44.6
+  lng: -110.5
+  gateway: West Yellowstone, MT
+  visited: false

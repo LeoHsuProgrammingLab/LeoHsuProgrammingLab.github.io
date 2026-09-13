@@ -1,0 +1,20 @@
+{%- comment -%}
+  Emits the contents of a JSON photo array for the photos directly in `dir`.
+  Params: dir (gallery folder path, trailing slash), tm (travel data, for captions).
+{%- endcomment -%}
+{%- assign inc_exts = ".jpg,.jpeg,.png,.JPG,.JPEG,.PNG" | split: "," -%}
+{%- assign inc_dir = include.dir -%}
+{%- assign inc_tm = include.tm -%}
+{%- assign subtree = site.static_files | where_exp: "f", "f.path contains inc_dir" | where_exp: "f", "inc_exts contains f.extname" | sort: "path" -%}
+{%- assign first = true -%}
+{%- for f in subtree -%}
+  {%- assign expect = inc_dir | append: f.name -%}
+  {%- if f.path == expect -%}
+    {%- unless first %},{% endunless %}{%- assign first = false -%}
+    {
+      "src": {{ f.path | relative_url | jsonify }},
+      "thumb": {{ inc_dir | append: f.basename | append: "-480.webp" | relative_url | jsonify }},
+      "caption": {{ inc_tm.photo_captions[f.name] | default: "" | jsonify }}
+    }
+  {%- endif -%}
+{%- endfor -%}

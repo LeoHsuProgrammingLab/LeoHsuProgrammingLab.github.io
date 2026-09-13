@@ -1,0 +1,15 @@
+{%- comment -%}
+  Outputs the number of photos sitting directly in `dir`, not counting anything
+  in folders below it. The exact-path compare is what keeps a country's own
+  photos separate from its cities'.
+  Params: dir (gallery folder path, with a trailing slash).
+{%- endcomment -%}
+{%- assign inc_exts = ".jpg,.jpeg,.png,.JPG,.JPEG,.PNG" | split: "," -%}
+{%- assign inc_dir = include.dir -%}
+{%- assign subtree = site.static_files | where_exp: "f", "f.path contains inc_dir" | where_exp: "f", "inc_exts contains f.extname" -%}
+{%- assign n = 0 -%}
+{%- for f in subtree -%}
+  {%- assign expect = inc_dir | append: f.name -%}
+  {%- if f.path == expect -%}{%- assign n = n | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+{{- n -}}

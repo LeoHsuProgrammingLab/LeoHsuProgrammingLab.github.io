@@ -121,9 +121,13 @@ bing_site_verification:  # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
-blog_nav_title: # your blog must have a title for it to be displayed in the nav bar
-blog_description: a simple whitespace theme for academics
+blog_name: Notes # blog_name will be displayed in your blog page
+# Leave blog_nav_title blank to keep the blog out of the nav bar. Set it to
+# "Blog" once the first real post is up; it will appear between Publications
+# and More. The blog itself stays reachable at /blog/ either way.
+blog_nav_title:
+blog_nav_order: 2.5 # slot among the nav pages (Publications is 2, More is 3)
+blog_description: research, code, basketball, and the road in between
 permalink: /blog/:year/:title/
 
 # Pagination
@@ -156,8 +160,8 @@ disqus_shortname: al-folio # put your disqus shortname
 # If you have blog posts published on medium.com or other external sources,
 # you can display them in your blog by adding a link to the RSS feed.
 external_sources:
-  - name: medium.com
-    rss_url: https://medium.com/@al-folio/feed
+  # - name: medium.com
+  #   rss_url: https://medium.com/@your-handle/feed
 
 # -----------------------------------------------------------------------------
 # Collections
@@ -264,8 +268,8 @@ jekyll-archives:
     tag: '/blog/tag/:name/'
     category: '/blog/category/:name/'
 
-display_tags: ['formatting', 'images', 'links', 'math', 'code'] # these tags will be displayed on the front page of your blog
-display_categories: ['blockquotes'] # these categories will be displayed on the front page of your blog
+display_tags: [] # these tags will be displayed on the front page of your blog
+display_categories: [] # these categories will be displayed on the front page of your blog
 
 # -----------------------------------------------------------------------------
 # Jekyll Scholar
@@ -343,7 +347,12 @@ imagemagick:
     - ".png"
     - ".tiff"
   output_formats:
-    webp: "-resize 800x"
+    # -auto-orient bakes in EXIF rotation. Without it, phone photos shot in
+    # portrait come out of the WebP conversion lying on their side, because the
+    # browser honours the EXIF tag on the original JPEG but not on the WebP.
+    # The cap is above the largest entry in `widths` so the 1400px variant is a
+    # real 1400px image rather than an upscale of an 800px one.
+    webp: "-auto-orient -resize 1600x"
 
 # -----------------------------------------------------------------------------
 # Jekyll Diagrams
@@ -396,6 +405,11 @@ mdb:
 medium_zoom:
   version: "1.0.8"
   integrity: "sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8="
+leaflet:
+  version: "1.9.4"
+  integrity:
+    css: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    js: "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
 
 # -----------------------------------------------------------------------------
 # Get external JSON data
