@@ -23,7 +23,6 @@
 
   var root = document.getElementById("travel-map");
   var canvas = document.getElementById("travel-map-canvas");
-  var cardEl = document.getElementById("travel-map-card");
   var loadingEl = document.getElementById("travel-map-loading");
   var dataEl = document.getElementById("travel-map-data");
   if (!root || !canvas || !dataEl) return;
@@ -472,9 +471,6 @@
       if (canHover) openPlace(stateCard(code, name), e.containerPoint);
     });
 
-    layer.on("mousemove", function (e) {
-      if (canHover && !pinned) positionCard(e.containerPoint);
-    });
 
     layer.on("mouseout", function () {
       layer.setStyle({ fillOpacity: PAL.visitedFill, weight: PAL.visitedWeight });
@@ -484,7 +480,6 @@
     layer.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
-      root.classList.add("travel-map--card-pinned");
       openPlace(stateCard(code, name), e.containerPoint);
     });
   }
@@ -522,16 +517,12 @@
     layer.on("mouseover", function (e) {
       if (canHover) openPlace(card, e.containerPoint);
     });
-    layer.on("mousemove", function (e) {
-      if (canHover && !pinned) positionCard(e.containerPoint);
-    });
     layer.on("mouseout", function () {
       if (canHover && !pinned) closePlace();
     });
     layer.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
-      root.classList.add("travel-map--card-pinned");
       openPlace(card, e.containerPoint);
     });
   }
@@ -562,7 +553,6 @@
     ring.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
-      root.classList.add("travel-map--card-pinned");
       openPlace(card, e.containerPoint);
     });
     countryRings.push({ ring: ring, layer: layer });
@@ -630,6 +620,7 @@
 
   var spreadEl = null;
   var spreadTimer = null;
+  var spreadToken = 0;
 
   function ensureSpread() {
     if (!spreadEl) {
@@ -639,7 +630,7 @@
       // Only reachable while pinned, since the overlay is otherwise
       // pointer-events: none. On a touch screen it is the only way out.
       spreadEl.addEventListener("click", function () {
-        if (pinned) unpinCard();
+        if (pinned) unpin();
       });
       document.body.appendChild(spreadEl);
     }
@@ -663,36 +654,41 @@
   }
 
   /**
-   * Jittered grid across the viewport, sized to the number of photos.
+   * Jittered grid across the viewport, sized from each photo's real shape.
    *
-   * Photos keep their own aspect ratio rather than being cropped to a box, so
-   * the height is not known here. Sizing budgets for the tallest common shape
-   * and clamps every tile inside the viewport, which is what stops a portrait
-   * shot from hanging off the bottom edge.
+   * Every tile used to be budgeted as if it were a tall portrait, which meant a
+   * landscape photo was sized for a height it never used. That wasted most of
+   * the screen, and the only way earlier versions looked big was by letting
+   * tiles grow past their cell and collide. Given the actual aspect ratios, a
+   * tile can take the largest size that still fits its own cell, so the photos
+   * are large *and* nothing touches.
+   *
+   * `ratios` are height / width, one per photo.
    */
-  var SPREAD_PAD = 10;
-  var SPREAD_TITLE_BAND = 96; // room at the foot for the place name
-  var SPREAD_TALLEST = 1.4; // a little taller than 3:4
+  var SPREAD_PAD = 10; // clear air against the edge of the screen
+  var SPREAD_TITLE_GAP = 16; // clear air between the lowest photo and the name
+  var SPREAD_GUTTER = 10; // minimum air between two neighbouring photos
+  var SPREAD_JITTER = 0.035; // how far off its cell centre a photo may sit
+  var SPREAD_ROT = 8; // total rotation swing in degrees
 
-  function spreadLayout(n, rnd) {
+  function spreadLayout(ratios, rnd, reservedBottom) {
+    var n = ratios.length;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var usableH = Math.max(220, vh - SPREAD_TITLE_BAND);
+    var usableH = Math.max(200, vh - reservedBottom);
 
     var cols = Math.max(1, Math.round(Math.sqrt(n * vw / usableH)));
     var rows = Math.ceil(n / cols);
     var cellW = vw / cols;
     var cellH = usableH / rows;
 
-    // Under-fill each cell so neighbours do not crowd each other.
-    // Fill the cell. Tiles sit close together so each one can be as large as
-    // the grid allows; the rotation and the small offset below keep it from
-    // reading as a plain grid.
-    var base = Math.min(cellW, cellH / SPREAD_TALLEST);
-    base = Math.max(120, Math.min(base, Math.min(vw, usableH) * 0.46));
+    var half = (SPREAD_ROT / 2) * Math.PI / 180;
+    var cos = Math.cos(half);
+    var sin = Math.sin(half);
 
-    // Never let a tile be wide enough that its tallest possible form spills.
-    var maxW = (usableH - 2 * SPREAD_PAD) / SPREAD_TALLEST;
+    var availW = Math.max(24, cellW - SPREAD_GUTTER - 2 * SPREAD_JITTER * cellW);
+    var availH = Math.max(24, cellH - SPREAD_GUTTER - 2 * SPREAD_JITTER * cellH);
+    var capW = Math.min(vw, usableH) * 0.5;
 
     var out = [];
     for (var i = 0; i < n; i++) {
@@ -701,84 +697,158 @@
       var inRow = Math.min(cols, n - row * cols);
       var indent = (cols - inRow) * cellW / 2; // centre a short last row
 
-      var w = Math.min(base * (0.92 + rnd() * 0.2), maxW);
-      var hEst = w * SPREAD_TALLEST;
-      var rot = (rnd() - 0.5) * 9;
+      // A rotated w x (w*r) rectangle spans w*(cos + r*sin) across and
+      // w*(sin + r*cos) down, so solve each bound for w and take the tighter.
+      var r = ratios[i] > 0 ? ratios[i] : 1;
+      var w = Math.min(availW / (cos + r * sin), availH / (sin + r * cos), capW);
+      w = Math.max(48, w) * (0.94 + rnd() * 0.06);
+      var h = w * r;
+      var rot = (rnd() - 0.5) * SPREAD_ROT;
 
-      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.1;
-      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.1;
+      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * SPREAD_JITTER * 2;
+      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * SPREAD_JITTER * 2;
 
-      // Clamp against the rotated bounding box, not the tile's own width. A
-      // tilted rectangle reaches further than it is wide, so clamping on the
-      // raw width lets a corner poke off the edge of the screen.
-      var rad = Math.abs(rot) * Math.PI / 180;
-      var halfW = (w * Math.cos(rad) + hEst * Math.sin(rad)) / 2;
-      var halfH = (w * Math.sin(rad) + hEst * Math.cos(rad)) / 2;
-
+      // Keep the rotated box inside the viewport as well as inside its cell.
+      var radNow = Math.abs(rot) * Math.PI / 180;
+      var halfW = (w * Math.cos(radNow) + h * Math.sin(radNow)) / 2;
+      var halfH = (w * Math.sin(radNow) + h * Math.cos(radNow)) / 2;
       x = Math.max(halfW + SPREAD_PAD, Math.min(x, vw - halfW - SPREAD_PAD));
       y = Math.max(halfH + SPREAD_PAD, Math.min(y, usableH - halfH - SPREAD_PAD));
 
-      out.push({ x: x, y: y, rot: rot, size: w });
+      out.push({ x: x, y: y, rot: rot, size: w, height: h });
     }
     return out;
   }
 
+  /**
+   * Read the real shape of each thumbnail. These are 480px WebP files, and the
+   * browser has them cached after the first hover, so this resolves within a
+   * frame on every hover after that.
+   */
+  function loadRatios(photos) {
+    return Promise.all(photos.map(function (photo) {
+      return new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = function () {
+          resolve(img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1);
+        };
+        img.onerror = function () { resolve(1); };
+        img.src = photo.thumb;
+      });
+    }));
+  }
+
+  var NO_PHOTOS_YET = "Recorded by my eyes, need a decoder to show!";
+
+  /**
+   * How much of the bottom of the screen the name block occupies, from its own
+   * height plus whatever `bottom` the stylesheet gives it. offsetHeight is used
+   * rather than a bounding rect because the block is mid-transform at this
+   * point and a rect would include the offset it is about to animate away.
+   */
+  function measureTitleBand(el) {
+    var title = el.querySelector(".travel-spread__title");
+    if (!title) return SPREAD_TITLE_GAP;
+    var bottom = parseFloat(window.getComputedStyle(title).bottom);
+    if (!isFinite(bottom)) bottom = 0;
+    return bottom + title.offsetHeight + SPREAD_TITLE_GAP;
+  }
+
   function showSpread(card, origin) {
     var photos = (card.photos || []).slice(0, SPREAD_MAX);
-    if (!photos.length) return false;
-
     var el = ensureSpread();
     window.clearTimeout(spreadTimer);
 
     var rnd = seeded(card.name);
-    var pos = spreadLayout(photos.length, rnd);
     var extra = (card.photos || []).length - photos.length;
+
+    var detail = (card.meta || []).slice();
+    if (card.note) detail.unshift(card.note);
 
     var html = '<div class="travel-spread__scrim"></div>';
     html +=
       '<div class="travel-spread__title">' +
         '<span class="travel-spread__name">' + esc(card.name) + "</span>" +
         (card.where ? '<span class="travel-spread__where">' + esc(card.where) + "</span>" : "") +
+        (detail.length
+          ? '<span class="travel-spread__detail">' + esc(detail.join("  \u00b7  ")) + "</span>"
+          : "") +
         (extra > 0 ? '<span class="travel-spread__more">+' + extra + " more</span>" : "") +
       "</div>";
 
-    photos.forEach(function (photo, i) {
-      var p = pos[i];
-      html +=
-        '<figure class="travel-spread__tile" style="' +
-          "width:" + Math.round(p.size) + "px;" +
-          "--tx:" + Math.round(p.x) + "px;" +
-          "--ty:" + Math.round(p.y) + "px;" +
-          "--rot:" + p.rot.toFixed(1) + "deg;" +
-          "--ox:" + Math.round(origin.x) + "px;" +
-          "--oy:" + Math.round(origin.y) + "px;" +
-          "transition-delay:" + (i * SPREAD_STAGGER) + "ms" +
-        '">' +
-          '<img src="' + esc(photo.thumb) + '" data-fallback="' + esc(photo.src) +
-            '" alt="' + esc(photo.caption || card.name) + '" decoding="async" />' +
-          (photo.caption
-            ? '<figcaption class="travel-spread__caption">' + esc(photo.caption) + "</figcaption>"
-            : "") +
-        "</figure>";
-    });
+    if (!photos.length) {
+      html += '<p class="travel-spread__empty">' + esc(NO_PHOTOS_YET) + "</p>";
+    }
 
+    // The name block goes in on its own first so its real height can be read
+    // back. Reserving a guessed number of pixels used to leave the bottom row
+    // of photos sitting on top of the text.
     el.innerHTML = html;
-    Array.prototype.forEach.call(el.querySelectorAll("img[data-fallback]"), function (img) {
-      img.addEventListener("error", function onError() {
-        img.removeEventListener("error", onError);
-        img.src = img.getAttribute("data-fallback");
-      });
-    });
-
-    void el.offsetWidth; // commit the closed state before flipping it open
-    el.classList.add("is-open");
+    el.classList.toggle("is-empty", photos.length === 0);
     el.classList.toggle("is-pinned", pinned);
     el.setAttribute("aria-hidden", "false");
+
+    if (!photos.length) {
+      void el.offsetWidth;
+      el.classList.add("is-open");
+      return true;
+    }
+
+    // Each call gets a token, so a hover that ends while the thumbnails are
+    // still being measured does not open the spread after the fact.
+    var token = ++spreadToken;
+
+    loadRatios(photos).then(function (ratios) {
+      if (token !== spreadToken) return;
+
+      var pos = spreadLayout(ratios, rnd, measureTitleBand(el));
+      var tiles = "";
+
+      photos.forEach(function (photo, i) {
+        var p = pos[i];
+        tiles +=
+          '<figure class="travel-spread__tile" style="' +
+            "width:" + Math.round(p.size) + "px;" +
+            "height:" + Math.round(p.height) + "px;" +
+            "--tx:" + Math.round(p.x) + "px;" +
+            "--ty:" + Math.round(p.y) + "px;" +
+            "--rot:" + p.rot.toFixed(1) + "deg;" +
+            "--ox:" + Math.round(origin.x) + "px;" +
+            "--oy:" + Math.round(origin.y) + "px;" +
+            "transition-delay:" + (i * SPREAD_STAGGER) + "ms" +
+          '">' +
+            '<img src="' + esc(photo.thumb) + '" data-fallback="' + esc(photo.src) +
+              '" alt="' + esc(photo.caption || card.name) + '" decoding="async" />' +
+            (photo.caption
+              ? '<figcaption class="travel-spread__caption">' + esc(photo.caption) + "</figcaption>"
+              : "") +
+          "</figure>";
+      });
+
+      el.insertAdjacentHTML("beforeend", tiles);
+      Array.prototype.forEach.call(el.querySelectorAll("img[data-fallback]"), function (img) {
+        img.addEventListener("error", function onError() {
+          img.removeEventListener("error", onError);
+          img.src = img.getAttribute("data-fallback");
+        });
+      });
+
+      void el.offsetWidth; // commit the closed state before flipping it open
+      el.classList.add("is-open");
+    });
+
     return true;
   }
 
   function hideSpread() {
-    if (!spreadEl || !spreadEl.classList.contains("is-open")) return;
+    spreadToken++; // cancel any open that is still measuring thumbnails
+    if (!spreadEl || !spreadEl.classList.contains("is-open")) {
+      if (spreadEl) {
+        spreadEl.classList.remove("is-pinned", "is-empty");
+        spreadEl.setAttribute("aria-hidden", "true");
+      }
+      return;
+    }
 
     // Condense back last-out-first, so the scatter collapses rather than
     // collapsing in the same order it opened.
@@ -788,7 +858,7 @@
       tile.style.transitionDelay = (n - 1 - i) * 20 + "ms";
     });
 
-    spreadEl.classList.remove("is-open", "is-pinned");
+    spreadEl.classList.remove("is-open", "is-pinned", "is-empty");
     spreadEl.setAttribute("aria-hidden", "true");
     window.clearTimeout(spreadTimer);
     spreadTimer = window.setTimeout(function () {
@@ -802,23 +872,12 @@
     return { x: rect.left + containerPoint.x, y: rect.top + containerPoint.y };
   }
 
-  /**
-   * A place with photos gets the full-screen spread; one without falls back to
-   * the small card, since taking over the screen to say "nothing here yet"
-   * would be a poor trade.
-   */
+  /** Every place opens the spread, photos or not. */
   function openPlace(card, containerPoint) {
-    if (card.photos && card.photos.length) {
-      hideCard();
-      showSpread(card, toViewport(containerPoint));
-    } else {
-      hideSpread();
-      showCard(card, containerPoint);
-    }
+    showSpread(card, toViewport(containerPoint));
   }
 
   function closePlace() {
-    hideCard();
     hideSpread();
   }
 
@@ -846,115 +905,16 @@
     };
   }
 
-  function buildCard(card) {
-    var limit = CFG.view.photoLimit || 5;
-    var name = card.name;
-    var all = card.photos || [];
-    var photos = all.slice(0, limit);
-    var extra = all.length - photos.length;
-    var info = { note: card.note };
-
-    var meta = (card.meta || []).slice();
-    if (all.length) meta.push(plural(all.length, "photo", "photos"));
-
-    var html =
-      '<div class="travel-card__head">' +
-        '<span class="travel-card__name">' + esc(name) + "</span>" +
-        (meta.length ? '<span class="travel-card__meta">' + esc(meta.join("  ·  ")) + "</span>" : "") +
-      "</div>";
-
-    if (info.note) html += '<p class="travel-card__note">' + esc(info.note) + "</p>";
-
-    if (photos.length) {
-      html += '<div class="travel-card__collage travel-card__collage--n' + photos.length + '">';
-      photos.forEach(function (photo, i) {
-        html +=
-          '<div class="travel-card__tile">' +
-            '<img src="' + esc(photo.thumb) + '" alt="' +
-              esc(photo.caption || name + " photo " + (i + 1)) +
-              '" loading="lazy" decoding="async" data-fallback="' + esc(photo.src) + '" />' +
-            (i === photos.length - 1 && extra > 0
-              ? '<span class="travel-card__more">+' + extra + "</span>"
-              : "") +
-          "</div>";
-      });
-      html += "</div>";
-    } else {
-      html +=
-        '<div class="travel-card__empty">' +
-          '<span class="travel-card__empty-icon" aria-hidden="true">▢</span>' +
-          "<span>Photos coming soon</span>" +
-        "</div>";
-    }
-
-    if (pinned) {
-      html += '<button type="button" class="travel-card__close" aria-label="Close">&times;</button>';
-    }
-    return html;
-  }
-
-  function showCard(card, containerPoint) {
-    cardEl.innerHTML = buildCard(card);
-    cardEl.classList.add("is-visible");
-    cardEl.classList.toggle("travel-map__card--home", !!card.home);
-    cardEl.setAttribute("aria-hidden", "false");
-
-    Array.prototype.forEach.call(cardEl.querySelectorAll("img[data-fallback]"), function (img) {
-      img.addEventListener("error", function onError() {
-        img.removeEventListener("error", onError);
-        img.src = img.getAttribute("data-fallback");
-      });
-    });
-
-    var close = cardEl.querySelector(".travel-card__close");
-    if (close) {
-      close.addEventListener("click", function (e) {
-        e.stopPropagation();
-        unpinCard();
-      });
-    }
-
-    if (pinned) {
-      cardEl.style.transform = ""; // pinned cards are placed by the stylesheet
-    } else {
-      positionCard(containerPoint);
-    }
-  }
-
-  function positionCard(containerPoint) {
-    if (!containerPoint) return;
-    var size = map.getSize();
-    var pad = 12;
-    var w = cardEl.offsetWidth;
-    var h = cardEl.offsetHeight;
-
-    var x = containerPoint.x + 20;
-    var y = containerPoint.y + 20;
-    if (x + w + pad > size.x) x = containerPoint.x - w - 20;
-    if (x < pad) x = pad;
-    if (y + h + pad > size.y) y = containerPoint.y - h - 20;
-    if (y < pad) y = pad;
-
-    cardEl.style.transform = "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px,0)";
-  }
-
-  function hideCard() {
-    cardEl.classList.remove("is-visible");
-    cardEl.setAttribute("aria-hidden", "true");
-  }
-
-  function unpinCard() {
+  function unpin() {
     pinned = false;
-    root.classList.remove("travel-map--card-pinned");
-    hideCard();
     hideSpread();
   }
 
   map.on("click", function () {
-    if (pinned) unpinCard();
+    if (pinned) unpin();
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && pinned) unpinCard();
+    if (e.key === "Escape" && pinned) unpin();
   });
 
   /* -------------------------------------------------------------- controls */

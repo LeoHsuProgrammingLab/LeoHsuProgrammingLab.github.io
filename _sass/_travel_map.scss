@@ -35,10 +35,6 @@
   --travel-label-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.7);
   --travel-active-text: #0d1016;
 
-  --travel-card-bg: rgba(14, 16, 24, 0.93);
-  --travel-card-fg: #f3f5fb;
-  --travel-card-muted: rgba(243, 245, 251, 0.62);
-  --travel-card-line: rgba(255, 255, 255, 0.12);
 
   margin: 1.75rem 0 2.25rem;
 
@@ -249,198 +245,6 @@
       font-size: 0.78rem;
       opacity: 0.8;
     }
-  }
-
-  /* --------------------------------------------------------- hover card */
-
-  &__card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 640;
-    width: 264px;
-    padding: 0.7rem 0.75rem 0.75rem;
-    border-radius: 13px;
-    border: 1px solid var(--travel-card-line);
-    background-color: var(--travel-card-bg);
-    color: var(--travel-card-fg);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.14s ease;
-
-    &.is-visible {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  // Tapped-open cards sit in the middle of the map rather than along its bottom
-  // edge: the site footer is `position: fixed`, so anything near the foot of the
-  // map gets covered by it and stops taking taps.
-  &--card-pinned &__card {
-    pointer-events: auto;
-    left: 50%;
-    top: 50%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* ------------------------------------------------------------- card guts */
-
-.travel-card {
-  &__head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--travel-card-line);
-  }
-
-  &__name {
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.01em;
-  }
-
-  &__meta {
-    font-size: 0.7rem;
-    white-space: nowrap;
-    color: var(--travel-card-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__note {
-    margin: 0.45rem 0 0;
-    font-size: 0.76rem;
-    line-height: 1.4;
-    color: var(--travel-card-muted);
-  }
-
-  &__collage {
-    display: grid;
-    gap: 4px;
-    margin-top: 0.55rem;
-
-    &--n1 {
-      grid-template-columns: 1fr;
-      grid-auto-rows: 128px;
-    }
-
-    &--n2 {
-      grid-template-columns: repeat(2, 1fr);
-      grid-auto-rows: 96px;
-    }
-
-    &--n3 {
-      grid-template-columns: repeat(2, 1fr);
-      grid-auto-rows: 62px;
-
-      .travel-card__tile:first-child {
-        grid-row: span 2;
-      }
-    }
-
-    &--n4 {
-      grid-template-columns: repeat(2, 1fr);
-      grid-auto-rows: 70px;
-    }
-
-    &--n5 {
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: 64px;
-
-      .travel-card__tile:first-child {
-        grid-column: span 2;
-        grid-row: span 2;
-      }
-    }
-  }
-
-  &__tile {
-    position: relative;
-    overflow: hidden;
-    border-radius: 7px;
-    background-color: rgba(255, 255, 255, 0.06);
-    animation: travel-tile-in 0.28s ease both;
-
-    @for $i from 1 through 5 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{($i - 1) * 0.035}s;
-      }
-    }
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  &__more {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #fff;
-    background-color: rgba(8, 10, 16, 0.58);
-    backdrop-filter: blur(1px);
-  }
-
-  &__empty {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-top: 0.55rem;
-    padding: 0.7rem 0.6rem;
-    border: 1px dashed var(--travel-card-line);
-    border-radius: 8px;
-    font-size: 0.75rem;
-    color: var(--travel-card-muted);
-  }
-
-  &__empty-icon {
-    font-size: 0.95rem;
-    opacity: 0.7;
-  }
-
-  &__close {
-    position: absolute;
-    top: 5px;
-    right: 7px;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    line-height: 1;
-    font-size: 1.05rem;
-    border: 0;
-    border-radius: 50%;
-    color: var(--travel-card-fg);
-    background-color: rgba(255, 255, 255, 0.12);
-    cursor: pointer;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.24);
-    }
-  }
-}
-
-@keyframes travel-tile-in {
-  from {
-    opacity: 0;
-    transform: scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 
@@ -708,8 +512,8 @@
     inset: 0;
     background: radial-gradient(
       ellipse at center,
-      rgba(6, 8, 14, 0.72) 0%,
-      rgba(6, 8, 14, 0.9) 100%
+      rgba(5, 7, 12, 0.84) 0%,
+      rgba(5, 7, 12, 0.95) 100%
     );
     backdrop-filter: blur(3px);
     opacity: 0;
@@ -729,10 +533,20 @@
     flex-direction: column;
     align-items: center;
     gap: 0.15rem;
+    padding: 0.7rem 2.2rem 0.85rem;
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s ease 0.15s, transform 0.4s ease 0.15s;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 2px 18px rgba(0, 0, 0, 0.85);
+
+    // A soft pool of darkness that fades to nothing, so the text stays legible
+    // when a bright photo lands behind it without drawing a visible box.
+    background: radial-gradient(
+      ellipse at center,
+      rgba(4, 6, 11, 0.82) 0%,
+      rgba(4, 6, 11, 0.55) 55%,
+      rgba(4, 6, 11, 0) 100%
+    );
   }
 
   &.is-open &__title {
@@ -749,18 +563,62 @@
   }
 
   &__where {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.82rem;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--travel-accent, #ffd24a);
+    color: #ffd873;
+  }
+
+  &__detail {
+    margin-top: 0.3rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: #f4f6fb;
+    font-variant-numeric: tabular-nums;
   }
 
   &__more {
     margin-top: 0.2rem;
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.6);
+    color: #dfe5ef;
+  }
+
+  // Shown for a place with no photos yet. With nothing to scatter, the title
+  // moves off the foot of the screen and this sits under it in the middle.
+  &__empty {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 0;
+    transform: translate(-50%, 18px);
+    max-width: min(30rem, 86vw);
+    text-align: center;
+    font-size: clamp(1.02rem, 2.4vw, 1.25rem);
+    line-height: 1.5;
+    font-style: italic;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 2px 16px rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s, transform 0.4s ease 0.1s;
+  }
+
+  &.is-open &__empty {
+    opacity: 1;
+    transform: translate(-50%, 14px);
+  }
+
+  // Composed translates rather than calc(), for the same minifier reason noted
+  // on the tile transform below.
+  &.is-empty &__title {
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -100%) translateY(6px);
+  }
+
+  &.is-empty.is-open &__title {
+    transform: translate(-50%, -100%) translateY(0);
   }
 
   &__tile {
@@ -786,10 +644,13 @@
     transition: transform 0.62s cubic-bezier(0.2, 0.86, 0.28, 1),
       opacity 0.32s ease;
 
+    // The tile is given an explicit width and height from the photo's own
+    // aspect ratio, so the image fills it exactly with nothing to crop.
     img {
       display: block;
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: cover;
     }
   }
 
@@ -802,10 +663,10 @@
 
   &__caption {
     padding: 0.4rem 0.55rem;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     line-height: 1.35;
-    color: rgba(255, 255, 255, 0.88);
-    background-color: rgba(8, 10, 16, 0.72);
+    color: #ffffff;
+    background-color: rgba(6, 8, 13, 0.85);
   }
 }
 
@@ -828,13 +689,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .travel-card__tile {
-    animation: none;
-  }
-
   .travel-state--visited,
-  .travel-pin,
-  .travel-map__card {
+  .travel-pin {
     transition: none;
   }
 }
@@ -847,10 +703,6 @@
     height: auto;
     min-height: 270px;
     aspect-ratio: 3 / 2;
-  }
-
-  .travel-map__card {
-    width: min(248px, calc(100vw - 48px));
   }
 
   .travel-map__stat-value {
