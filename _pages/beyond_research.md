@@ -19,7 +19,3 @@ I have been a Lakers fan since the 2007-08 season. My favorite player is Kobe Br
 ### **My Travel Map**
 
 {% include us_visited_states_map.html %}
-
-### **Photos From the Road**
-
-{% include travel_gallery.html %}

@@ -9,3 +9,6 @@ _site
 Gemfile.lock
 vendor
 
+
+# untouched copies of gallery photos, kept locally by bin/resize_gallery_photos.sh
+.photo-originals

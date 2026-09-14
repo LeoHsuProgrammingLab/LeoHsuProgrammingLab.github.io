@@ -674,6 +674,153 @@
   }
 }
 
+/*******************************************************************************
+ * Full-screen photo spread
+ *
+ * Hovering a place throws its photos across the viewport; leaving pulls them
+ * back to where they came from. The overlay never takes pointer events, so
+ * covering the screen cannot steal the hover that is keeping it open.
+ ******************************************************************************/
+
+.travel-spread {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.9s;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, visibility 0s;
+  }
+
+  // Tapped open on a touch screen, where there is no hover to hold it.
+  &.is-pinned {
+    pointer-events: auto;
+    cursor: zoom-out;
+  }
+
+  &__scrim {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(6, 8, 14, 0.72) 0%,
+      rgba(6, 8, 14, 0.9) 100%
+    );
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  &.is-open &__scrim {
+    opacity: 1;
+  }
+
+  &__title {
+    position: absolute;
+    left: 50%;
+    bottom: 6%;
+    transform: translate(-50%, 14px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.15s, transform 0.4s ease 0.15s;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  }
+
+  &.is-open &__title {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  &__name {
+    font-size: clamp(1.6rem, 4.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    color: #fff;
+  }
+
+  &__where {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--travel-accent, #ffd24a);
+  }
+
+  &__more {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  &__tile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+
+    // Closed: collapsed onto the place the photos belong to.
+    transform: translate3d(calc(var(--ox) - 50%), calc(var(--oy) - 50%), 0)
+      scale(0.06) rotate(0deg);
+    transition: transform 0.62s cubic-bezier(0.2, 0.86, 0.28, 1),
+      opacity 0.32s ease;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  // Open: scattered across the viewport at its own angle.
+  &.is-open &__tile {
+    opacity: 1;
+    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+      scale(1) rotate(var(--rot));
+  }
+
+  &__caption {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.88);
+    background-color: rgba(8, 10, 16, 0.72);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // Cross-fade in place rather than flying the photos in and out.
+  .travel-spread__tile {
+    transition: opacity 0.2s ease;
+    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+      rotate(var(--rot));
+  }
+
+  .travel-spread.is-open .travel-spread__tile {
+    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+      rotate(var(--rot));
+  }
+
+  .travel-spread__title {
+    transition: opacity 0.2s ease;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .travel-card__tile {
     animation: none;

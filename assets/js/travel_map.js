@@ -177,6 +177,8 @@
     return Object.prototype.hasOwnProperty.call(statesByCode, code);
   }
 
+  var usName = CFG.usCountry || "United States";
+
   var countriesByName = {};
   (CFG.countries || []).forEach(function (c) {
     countriesByName[c.name] = c;
@@ -467,7 +469,7 @@
     layer.on("mouseover", function (e) {
       layer.setStyle({ fillOpacity: PAL.visitedHoverFill, weight: PAL.visitedWeight + 1.2 });
       if (layer.bringToFront) layer.bringToFront();
-      if (canHover) showCard(stateCard(code, name), e.containerPoint);
+      if (canHover) openPlace(stateCard(code, name), e.containerPoint);
     });
 
     layer.on("mousemove", function (e) {
@@ -476,14 +478,14 @@
 
     layer.on("mouseout", function () {
       layer.setStyle({ fillOpacity: PAL.visitedFill, weight: PAL.visitedWeight });
-      if (canHover && !pinned) hideCard();
+      if (canHover && !pinned) closePlace();
     });
 
     layer.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
       root.classList.add("travel-map--card-pinned");
-      showCard(stateCard(code, name), e.containerPoint);
+      openPlace(stateCard(code, name), e.containerPoint);
     });
   }
 
@@ -518,19 +520,19 @@
     }, labelOpts || {}));
 
     layer.on("mouseover", function (e) {
-      if (canHover) showCard(card, e.containerPoint);
+      if (canHover) openPlace(card, e.containerPoint);
     });
     layer.on("mousemove", function (e) {
       if (canHover && !pinned) positionCard(e.containerPoint);
     });
     layer.on("mouseout", function () {
-      if (canHover && !pinned) hideCard();
+      if (canHover && !pinned) closePlace();
     });
     layer.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
       root.classList.add("travel-map--card-pinned");
-      showCard(card, e.containerPoint);
+      openPlace(card, e.containerPoint);
     });
   }
 
@@ -552,16 +554,16 @@
       bubblingMouseEvents: false
     });
     ring.on("mouseover", function (e) {
-      if (canHover) showCard(card, e.containerPoint);
+      if (canHover) openPlace(card, e.containerPoint);
     });
     ring.on("mouseout", function () {
-      if (canHover && !pinned) hideCard();
+      if (canHover && !pinned) closePlace();
     });
     ring.on("click", function (e) {
       if (e.originalEvent) L.DomEvent.stopPropagation(e.originalEvent);
       pinned = true;
       root.classList.add("travel-map--card-pinned");
-      showCard(card, e.containerPoint);
+      openPlace(card, e.containerPoint);
     });
     countryRings.push({ ring: ring, layer: layer });
     ring.addTo(map);
@@ -590,9 +592,18 @@
       opts.pane = "travel-pins";
       opts.bubblingMouseEvents = false;
       var marker = L.circleMarker([place.lat, place.lng], opts);
+      var where = place.region
+        ? place.region + ", " + place.country
+        : (place.name === place.country ? "" : place.country);
       wireCard(
         marker,
-        { name: place.name, note: place.note, photos: place.photos, home: place.home },
+        {
+          name: place.name,
+          where: where,
+          note: place.note,
+          photos: place.photos,
+          home: place.home
+        },
         "travel-place-label" + (place.home ? " travel-place-label--home" : ""),
         { direction: "right", offset: [9, 0] }
       );
@@ -600,6 +611,206 @@
       placeMarkers.push({ marker: marker, place: place });
     });
   }
+
+  /* ---------------------------------------------------------- photo spread */
+
+  /**
+   * Hovering a place throws its photos out across the whole viewport, and
+   * leaving it pulls them back into the place they came from.
+   *
+   * The overlay lives on <body> rather than inside the map, because the map
+   * shell clips its own overflow, and it keeps `pointer-events: none` so that
+   * covering the screen never steals the hover that is keeping it open. That
+   * would otherwise flicker: overlay appears, cursor is no longer on the state,
+   * mouseout fires, overlay closes, cursor is on the state again.
+   */
+
+  var SPREAD_MAX = 12;
+  var SPREAD_STAGGER = 38;
+
+  var spreadEl = null;
+  var spreadTimer = null;
+
+  function ensureSpread() {
+    if (!spreadEl) {
+      spreadEl = document.createElement("div");
+      spreadEl.className = "travel-spread";
+      spreadEl.setAttribute("aria-hidden", "true");
+      // Only reachable while pinned, since the overlay is otherwise
+      // pointer-events: none. On a touch screen it is the only way out.
+      spreadEl.addEventListener("click", function () {
+        if (pinned) unpinCard();
+      });
+      document.body.appendChild(spreadEl);
+    }
+    return spreadEl;
+  }
+
+  /** Small deterministic PRNG so a place scatters the same way every time. */
+  function seeded(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return function () {
+      h += 0x6d2b79f5;
+      var t = h;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /**
+   * Jittered grid across the viewport, sized to the number of photos.
+   *
+   * Photos keep their own aspect ratio rather than being cropped to a box, so
+   * the height is not known here. Sizing budgets for the tallest common shape
+   * and clamps every tile inside the viewport, which is what stops a portrait
+   * shot from hanging off the bottom edge.
+   */
+  var SPREAD_PAD = 16;
+  var SPREAD_TITLE_BAND = 120; // room at the foot for the place name
+  var SPREAD_TALLEST = 1.4; // a little taller than 3:4
+
+  function spreadLayout(n, rnd) {
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var usableH = Math.max(220, vh - SPREAD_TITLE_BAND);
+
+    var cols = Math.max(1, Math.round(Math.sqrt(n * vw / usableH)));
+    var rows = Math.ceil(n / cols);
+    var cellW = vw / cols;
+    var cellH = usableH / rows;
+
+    var base = Math.min(cellW, cellH / SPREAD_TALLEST) * 0.92;
+    base = Math.max(110, Math.min(base, Math.min(vw, usableH) * 0.4));
+
+    // Never let a tile be wide enough that its tallest possible form spills.
+    var maxW = (usableH - 2 * SPREAD_PAD) / SPREAD_TALLEST;
+
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var col = i % cols;
+      var row = Math.floor(i / cols);
+      var inRow = Math.min(cols, n - row * cols);
+      var indent = (cols - inRow) * cellW / 2; // centre a short last row
+
+      var w = Math.min(base * (0.86 + rnd() * 0.28), maxW);
+      var hEst = w * SPREAD_TALLEST;
+
+      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.18;
+      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.18;
+
+      x = Math.max(w / 2 + SPREAD_PAD, Math.min(x, vw - w / 2 - SPREAD_PAD));
+      y = Math.max(hEst / 2 + SPREAD_PAD, Math.min(y, usableH - hEst / 2 - SPREAD_PAD));
+
+      out.push({ x: x, y: y, rot: (rnd() - 0.5) * 12, size: w });
+    }
+    return out;
+  }
+
+  function showSpread(card, origin) {
+    var photos = (card.photos || []).slice(0, SPREAD_MAX);
+    if (!photos.length) return false;
+
+    var el = ensureSpread();
+    window.clearTimeout(spreadTimer);
+
+    var rnd = seeded(card.name);
+    var pos = spreadLayout(photos.length, rnd);
+    var extra = (card.photos || []).length - photos.length;
+
+    var html = '<div class="travel-spread__scrim"></div>';
+    html +=
+      '<div class="travel-spread__title">' +
+        '<span class="travel-spread__name">' + esc(card.name) + "</span>" +
+        (card.where ? '<span class="travel-spread__where">' + esc(card.where) + "</span>" : "") +
+        (extra > 0 ? '<span class="travel-spread__more">+' + extra + " more</span>" : "") +
+      "</div>";
+
+    photos.forEach(function (photo, i) {
+      var p = pos[i];
+      html +=
+        '<figure class="travel-spread__tile" style="' +
+          "width:" + Math.round(p.size) + "px;" +
+          "--tx:" + Math.round(p.x) + "px;" +
+          "--ty:" + Math.round(p.y) + "px;" +
+          "--rot:" + p.rot.toFixed(1) + "deg;" +
+          "--ox:" + Math.round(origin.x) + "px;" +
+          "--oy:" + Math.round(origin.y) + "px;" +
+          "transition-delay:" + (i * SPREAD_STAGGER) + "ms" +
+        '">' +
+          '<img src="' + esc(photo.thumb) + '" data-fallback="' + esc(photo.src) +
+            '" alt="' + esc(photo.caption || card.name) + '" decoding="async" />' +
+          (photo.caption
+            ? '<figcaption class="travel-spread__caption">' + esc(photo.caption) + "</figcaption>"
+            : "") +
+        "</figure>";
+    });
+
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll("img[data-fallback]"), function (img) {
+      img.addEventListener("error", function onError() {
+        img.removeEventListener("error", onError);
+        img.src = img.getAttribute("data-fallback");
+      });
+    });
+
+    void el.offsetWidth; // commit the closed state before flipping it open
+    el.classList.add("is-open");
+    el.classList.toggle("is-pinned", pinned);
+    el.setAttribute("aria-hidden", "false");
+    return true;
+  }
+
+  function hideSpread() {
+    if (!spreadEl || !spreadEl.classList.contains("is-open")) return;
+
+    // Condense back last-out-first, so the scatter collapses rather than
+    // collapsing in the same order it opened.
+    var tiles = spreadEl.querySelectorAll(".travel-spread__tile");
+    var n = tiles.length;
+    Array.prototype.forEach.call(tiles, function (tile, i) {
+      tile.style.transitionDelay = (n - 1 - i) * 20 + "ms";
+    });
+
+    spreadEl.classList.remove("is-open", "is-pinned");
+    spreadEl.setAttribute("aria-hidden", "true");
+    window.clearTimeout(spreadTimer);
+    spreadTimer = window.setTimeout(function () {
+      if (spreadEl && !spreadEl.classList.contains("is-open")) spreadEl.innerHTML = "";
+    }, 900);
+  }
+
+  /** Map container point -> viewport point, for the spread's origin. */
+  function toViewport(containerPoint) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: rect.left + containerPoint.x, y: rect.top + containerPoint.y };
+  }
+
+  /**
+   * A place with photos gets the full-screen spread; one without falls back to
+   * the small card, since taking over the screen to say "nothing here yet"
+   * would be a poor trade.
+   */
+  function openPlace(card, containerPoint) {
+    if (card.photos && card.photos.length) {
+      hideCard();
+      showSpread(card, toViewport(containerPoint));
+    } else {
+      hideSpread();
+      showCard(card, containerPoint);
+    }
+  }
+
+  function closePlace() {
+    hideCard();
+    hideSpread();
+  }
+
+  window.addEventListener("resize", hideSpread);
 
   /* ------------------------------------------------------------- hover card */
 
@@ -614,7 +825,13 @@
     if (parks.length) {
       meta.push(parksDone + "/" + plural(parks.length, "park", "parks"));
     }
-    return { name: name, note: info.note, photos: info.photos, meta: meta };
+    return {
+      name: name,
+      where: usName,
+      note: info.note,
+      photos: info.photos,
+      meta: meta
+    };
   }
 
   function buildCard(card) {
@@ -718,6 +935,7 @@
     pinned = false;
     root.classList.remove("travel-map--card-pinned");
     hideCard();
+    hideSpread();
   }
 
   map.on("click", function () {

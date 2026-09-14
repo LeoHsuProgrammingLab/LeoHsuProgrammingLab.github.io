@@ -81,6 +81,7 @@
   <script type="application/json" id="travel-map-data">
   {
     "geojson": {{ "/assets/json/us-states.geojson" | relative_url | jsonify }},
+    "usCountry": {{ us_name | jsonify }},
     "countriesGeojson": {{ "/assets/json/visited-countries.geojson" | relative_url | jsonify }},
     "view": {
       "defaultView": {{ tm.map.default_view | default: "world" | jsonify }},
