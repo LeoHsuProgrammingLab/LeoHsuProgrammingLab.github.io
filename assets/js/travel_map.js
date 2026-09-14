@@ -670,8 +670,8 @@
    * and clamps every tile inside the viewport, which is what stops a portrait
    * shot from hanging off the bottom edge.
    */
-  var SPREAD_PAD = 16;
-  var SPREAD_TITLE_BAND = 120; // room at the foot for the place name
+  var SPREAD_PAD = 10;
+  var SPREAD_TITLE_BAND = 96; // room at the foot for the place name
   var SPREAD_TALLEST = 1.4; // a little taller than 3:4
 
   function spreadLayout(n, rnd) {
@@ -685,8 +685,11 @@
     var cellH = usableH / rows;
 
     // Under-fill each cell so neighbours do not crowd each other.
-    var base = Math.min(cellW, cellH / SPREAD_TALLEST) * 0.82;
-    base = Math.max(110, Math.min(base, Math.min(vw, usableH) * 0.4));
+    // Fill the cell. Tiles sit close together so each one can be as large as
+    // the grid allows; the rotation and the small offset below keep it from
+    // reading as a plain grid.
+    var base = Math.min(cellW, cellH / SPREAD_TALLEST);
+    base = Math.max(120, Math.min(base, Math.min(vw, usableH) * 0.46));
 
     // Never let a tile be wide enough that its tallest possible form spills.
     var maxW = (usableH - 2 * SPREAD_PAD) / SPREAD_TALLEST;
@@ -698,16 +701,24 @@
       var inRow = Math.min(cols, n - row * cols);
       var indent = (cols - inRow) * cellW / 2; // centre a short last row
 
-      var w = Math.min(base * (0.82 + rnd() * 0.34), maxW);
+      var w = Math.min(base * (0.92 + rnd() * 0.2), maxW);
       var hEst = w * SPREAD_TALLEST;
+      var rot = (rnd() - 0.5) * 9;
 
-      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.3;
-      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.3;
+      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.1;
+      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.1;
 
-      x = Math.max(w / 2 + SPREAD_PAD, Math.min(x, vw - w / 2 - SPREAD_PAD));
-      y = Math.max(hEst / 2 + SPREAD_PAD, Math.min(y, usableH - hEst / 2 - SPREAD_PAD));
+      // Clamp against the rotated bounding box, not the tile's own width. A
+      // tilted rectangle reaches further than it is wide, so clamping on the
+      // raw width lets a corner poke off the edge of the screen.
+      var rad = Math.abs(rot) * Math.PI / 180;
+      var halfW = (w * Math.cos(rad) + hEst * Math.sin(rad)) / 2;
+      var halfH = (w * Math.sin(rad) + hEst * Math.cos(rad)) / 2;
 
-      out.push({ x: x, y: y, rot: (rnd() - 0.5) * 12, size: w });
+      x = Math.max(halfW + SPREAD_PAD, Math.min(x, vw - halfW - SPREAD_PAD));
+      y = Math.max(halfH + SPREAD_PAD, Math.min(y, usableH - halfH - SPREAD_PAD));
+
+      out.push({ x: x, y: y, rot: rot, size: w });
     }
     return out;
   }
