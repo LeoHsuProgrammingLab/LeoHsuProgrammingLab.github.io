@@ -775,7 +775,13 @@
     opacity: 0;
 
     // Closed: collapsed onto the place the photos belong to.
-    transform: translate3d(calc(var(--ox) - 50%), calc(var(--oy) - 50%), 0)
+    //
+    // Centring is done with a second translate rather than
+    // `calc(var(--ox) - 50%)`, because the production CSS minifier rewrites a
+    // custom property inside calc() as `var( -  - ox)` and the whole transform
+    // is then dropped. That only happens under JEKYLL_ENV=production, so it
+    // does not show up in a plain local build.
+    transform: translate3d(var(--ox), var(--oy), 0) translate(-50%, -50%)
       scale(0.06) rotate(0deg);
     transition: transform 0.62s cubic-bezier(0.2, 0.86, 0.28, 1),
       opacity 0.32s ease;
@@ -790,7 +796,7 @@
   // Open: scattered across the viewport at its own angle.
   &.is-open &__tile {
     opacity: 1;
-    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+    transform: translate3d(var(--tx), var(--ty), 0) translate(-50%, -50%)
       scale(1) rotate(var(--rot));
   }
 
@@ -807,12 +813,12 @@
   // Cross-fade in place rather than flying the photos in and out.
   .travel-spread__tile {
     transition: opacity 0.2s ease;
-    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+    transform: translate3d(var(--tx), var(--ty), 0) translate(-50%, -50%)
       rotate(var(--rot));
   }
 
   .travel-spread.is-open .travel-spread__tile {
-    transform: translate3d(calc(var(--tx) - 50%), calc(var(--ty) - 50%), 0)
+    transform: translate3d(var(--tx), var(--ty), 0) translate(-50%, -50%)
       rotate(var(--rot));
   }
 

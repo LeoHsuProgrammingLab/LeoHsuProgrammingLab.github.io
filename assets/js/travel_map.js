@@ -684,7 +684,8 @@
     var cellW = vw / cols;
     var cellH = usableH / rows;
 
-    var base = Math.min(cellW, cellH / SPREAD_TALLEST) * 0.92;
+    // Under-fill each cell so neighbours do not crowd each other.
+    var base = Math.min(cellW, cellH / SPREAD_TALLEST) * 0.82;
     base = Math.max(110, Math.min(base, Math.min(vw, usableH) * 0.4));
 
     // Never let a tile be wide enough that its tallest possible form spills.
@@ -697,11 +698,11 @@
       var inRow = Math.min(cols, n - row * cols);
       var indent = (cols - inRow) * cellW / 2; // centre a short last row
 
-      var w = Math.min(base * (0.86 + rnd() * 0.28), maxW);
+      var w = Math.min(base * (0.82 + rnd() * 0.34), maxW);
       var hEst = w * SPREAD_TALLEST;
 
-      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.18;
-      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.18;
+      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * 0.3;
+      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * 0.3;
 
       x = Math.max(w / 2 + SPREAD_PAD, Math.min(x, vw - w / 2 - SPREAD_PAD));
       y = Math.max(hEst / 2 + SPREAD_PAD, Math.min(y, usableH - hEst / 2 - SPREAD_PAD));
