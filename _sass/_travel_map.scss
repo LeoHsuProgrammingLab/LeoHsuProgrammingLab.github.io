@@ -644,13 +644,13 @@
     transition: transform 0.62s cubic-bezier(0.2, 0.86, 0.28, 1),
       opacity 0.32s ease;
 
-    // The tile is given an explicit width and height from the photo's own
-    // aspect ratio, so the image fills it exactly with nothing to crop.
+    // Only a width is set on the tile, so the height follows the photo's own
+    // proportions. Nothing is cropped, and the layout reserved exactly this
+    // much room because it measured the same ratio off the file.
     img {
       display: block;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
     }
   }
 

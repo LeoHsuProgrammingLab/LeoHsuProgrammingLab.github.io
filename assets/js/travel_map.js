@@ -654,70 +654,126 @@
   }
 
   /**
-   * Jittered grid across the viewport, sized from each photo's real shape.
+   * Scatter the photos at random across the viewport without letting any two
+   * touch, and without letting any of them reach the name block at the foot.
    *
-   * Every tile used to be budgeted as if it were a tall portrait, which meant a
-   * landscape photo was sized for a height it never used. That wasted most of
-   * the screen, and the only way earlier versions looked big was by letting
-   * tiles grow past their cell and collide. Given the actual aspect ratios, a
-   * tile can take the largest size that still fits its own cell, so the photos
-   * are large *and* nothing touches.
+   * A grid, however jittered, still reads as a grid. This throws darts instead:
+   * for each photo it samples a number of random positions, discards the ones
+   * that collide with something already placed, and takes the most isolated of
+   * what is left. That keeps the arrangement irregular while the collision test
+   * does the work of keeping them apart.
    *
-   * `ratios` are height / width, one per photo.
+   * Size comes from a binary search. The largest scale at which every photo can
+   * still find a free spot wins, so the photos are as big as the room allows
+   * rather than as big as some fixed fraction of the screen.
+   *
+   * `ratios` are height / width, one per photo, measured from the real files.
    */
   var SPREAD_PAD = 10; // clear air against the edge of the screen
   var SPREAD_TITLE_GAP = 16; // clear air between the lowest photo and the name
   var SPREAD_GUTTER = 10; // minimum air between two neighbouring photos
-  var SPREAD_JITTER = 0.035; // how far off its cell centre a photo may sit
-  var SPREAD_ROT = 8; // total rotation swing in degrees
+  var SPREAD_ROT = 14; // total rotation swing in degrees
+  var SPREAD_TRIES = 160; // candidate positions considered per photo
+  var SPREAD_FIT_STEPS = 18; // binary search steps when sizing
 
-  function spreadLayout(ratios, rnd, reservedBottom) {
-    var n = ratios.length;
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
-    var usableH = Math.max(200, vh - reservedBottom);
+  /** Half-width and half-height of a w x h rectangle turned by `rot` degrees. */
+  function rotatedHalfExtents(w, h, rot) {
+    var rad = Math.abs(rot) * Math.PI / 180;
+    var c = Math.cos(rad);
+    var sn = Math.sin(rad);
+    return { hw: (w * c + h * sn) / 2, hh: (w * sn + h * c) / 2 };
+  }
 
-    var cols = Math.max(1, Math.round(Math.sqrt(n * vw / usableH)));
-    var rows = Math.ceil(n / cols);
-    var cellW = vw / cols;
-    var cellH = usableH / rows;
+  /** One packing attempt at a given size. Returns null if anything cannot fit. */
+  function attemptScatter(ratios, scale, seedKey, vw, usableH) {
+    var rnd = seeded(seedKey); // re-seeded per attempt, so a place always scatters the same way
+    var placed = [];
 
-    var half = (SPREAD_ROT / 2) * Math.PI / 180;
-    var cos = Math.cos(half);
-    var sin = Math.sin(half);
-
-    var availW = Math.max(24, cellW - SPREAD_GUTTER - 2 * SPREAD_JITTER * cellW);
-    var availH = Math.max(24, cellH - SPREAD_GUTTER - 2 * SPREAD_JITTER * cellH);
-    var capW = Math.min(vw, usableH) * 0.5;
-
-    var out = [];
-    for (var i = 0; i < n; i++) {
-      var col = i % cols;
-      var row = Math.floor(i / cols);
-      var inRow = Math.min(cols, n - row * cols);
-      var indent = (cols - inRow) * cellW / 2; // centre a short last row
-
-      // A rotated w x (w*r) rectangle spans w*(cos + r*sin) across and
-      // w*(sin + r*cos) down, so solve each bound for w and take the tighter.
+    for (var i = 0; i < ratios.length; i++) {
       var r = ratios[i] > 0 ? ratios[i] : 1;
-      var w = Math.min(availW / (cos + r * sin), availH / (sin + r * cos), capW);
-      w = Math.max(48, w) * (0.94 + rnd() * 0.06);
+      // Equal-area sizing, so a landscape and a portrait shot read as the same
+      // weight rather than the wide one dominating.
+      var vary = 0.88 + rnd() * 0.24;
+      var w = (scale * vary) / Math.sqrt(r);
       var h = w * r;
       var rot = (rnd() - 0.5) * SPREAD_ROT;
+      var ext = rotatedHalfExtents(w, h, rot);
 
-      var x = indent + col * cellW + cellW / 2 + (rnd() - 0.5) * cellW * SPREAD_JITTER * 2;
-      var y = row * cellH + cellH / 2 + (rnd() - 0.5) * cellH * SPREAD_JITTER * 2;
+      var minX = ext.hw + SPREAD_PAD;
+      var maxX = vw - ext.hw - SPREAD_PAD;
+      var minY = ext.hh + SPREAD_PAD;
+      var maxY = usableH - ext.hh - SPREAD_PAD;
+      if (maxX <= minX || maxY <= minY) return null;
 
-      // Keep the rotated box inside the viewport as well as inside its cell.
-      var radNow = Math.abs(rot) * Math.PI / 180;
-      var halfW = (w * Math.cos(radNow) + h * Math.sin(radNow)) / 2;
-      var halfH = (w * Math.sin(radNow) + h * Math.cos(radNow)) / 2;
-      x = Math.max(halfW + SPREAD_PAD, Math.min(x, vw - halfW - SPREAD_PAD));
-      y = Math.max(halfH + SPREAD_PAD, Math.min(y, usableH - halfH - SPREAD_PAD));
+      var best = null;
+      var bestClearance = Infinity;
 
-      out.push({ x: x, y: y, rot: rot, size: w, height: h });
+      for (var t = 0; t < SPREAD_TRIES; t++) {
+        var x = minX + rnd() * (maxX - minX);
+        var y = minY + rnd() * (maxY - minY);
+        var clear = Infinity;
+        var ok = true;
+
+        for (var j = 0; j < placed.length; j++) {
+          var q = placed[j];
+          var gapX = Math.abs(x - q.x) - (ext.hw + q.hw) - SPREAD_GUTTER;
+          var gapY = Math.abs(y - q.y) - (ext.hh + q.hh) - SPREAD_GUTTER;
+          // Boxes only clear each other if they are apart on at least one axis.
+          var gap = Math.max(gapX, gapY);
+          if (gap < 0) { ok = false; break; }
+          if (gap < clear) clear = gap;
+        }
+
+        // Take the *snuggest* legal spot rather than the roomiest. Preferring
+        // roomy positions pushes everything to the edges and leaves a hole in
+        // the middle, which caps how large the photos can be; preferring snug
+        // ones packs the screen, so the size search lands higher.
+        // `best === null` matters for the first photo, whose clearance is
+        // Infinity because there is nothing placed yet to measure against.
+        if (ok && (best === null || clear < bestClearance)) {
+          bestClearance = clear;
+          best = { x: x, y: y };
+        }
+      }
+
+      if (!best) return null;
+      placed.push({
+        x: best.x, y: best.y, hw: ext.hw, hh: ext.hh,
+        w: w, h: h, rot: rot
+      });
     }
-    return out;
+    return placed;
+  }
+
+  function spreadLayout(ratios, seedKey, reservedBottom) {
+    var n = ratios.length;
+    if (!n) return [];
+
+    var vw = window.innerWidth;
+    var usableH = Math.max(200, window.innerHeight - reservedBottom);
+
+    // Start from the size every photo would be if they tiled the area perfectly.
+    var hi = Math.sqrt((vw * usableH) / n) * 1.3;
+    var lo = 20;
+    var best = null;
+
+    for (var k = 0; k < SPREAD_FIT_STEPS; k++) {
+      var mid = (lo + hi) / 2;
+      var got = attemptScatter(ratios, mid, seedKey, vw, usableH);
+      if (got) { best = got; lo = mid; } else { hi = mid; }
+    }
+
+    // Nothing fit even at the smallest step: shrink until something does, so a
+    // crowded place still renders rather than rendering nothing at all.
+    var floor = lo;
+    while (!best && floor > 12) {
+      floor *= 0.75;
+      best = attemptScatter(ratios, floor, seedKey, vw, usableH);
+    }
+
+    return (best || []).map(function (t) {
+      return { x: t.x, y: t.y, rot: t.rot, size: t.w, height: t.h };
+    });
   }
 
   /**
@@ -759,7 +815,6 @@
     var el = ensureSpread();
     window.clearTimeout(spreadTimer);
 
-    var rnd = seeded(card.name);
     var extra = (card.photos || []).length - photos.length;
 
     var detail = (card.meta || []).slice();
@@ -801,7 +856,7 @@
     loadRatios(photos).then(function (ratios) {
       if (token !== spreadToken) return;
 
-      var pos = spreadLayout(ratios, rnd, measureTitleBand(el));
+      var pos = spreadLayout(ratios, card.name, measureTitleBand(el));
       var tiles = "";
 
       photos.forEach(function (photo, i) {
@@ -809,7 +864,6 @@
         tiles +=
           '<figure class="travel-spread__tile" style="' +
             "width:" + Math.round(p.size) + "px;" +
-            "height:" + Math.round(p.height) + "px;" +
             "--tx:" + Math.round(p.x) + "px;" +
             "--ty:" + Math.round(p.y) + "px;" +
             "--rot:" + p.rot.toFixed(1) + "deg;" +
